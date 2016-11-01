@@ -1,7 +1,5 @@
 from itertools import chain, combinations
 
-import networkx as nx
-
 
 def powerset(iterable):
     """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
@@ -11,37 +9,20 @@ def powerset(iterable):
     return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
 
 
-def df_to_edges(df):
-    edges = []
-    for source in df.index.values:
-        for dest in df.index.values:
-            if df[source][dest] > 0:
-                edges.append((source, dest, {'cost': df[source][dest]}))
-    return edges
-
-
-def scanning_path(G, source, scanning_ports):
-    """
-    Calculates the shortest path based on edge weight cost by checking
-    all
-    :param G: graph model with edge weights "cost"
-    :param source: port to start from
-    :param scanning_ports: iterable of tuples containing scanning ports
-           and costs
-    :return: tuple (sequence of nodes, cost of path)
-    """
+def scanning_path(source, scanning_ports, distances, destinations):
     min_path = None
     min_cost = None
-    cost, path = nx.single_source_dijkstra(G, source, weight="cost")
-    for sp, sc in scanning_ports:
-        cost[sp] += sc
-        if not min_cost or min_cost > cost[sp]:
-            min_cost = cost[sp]
-            min_path = path[sp]
+    for d in destinations:
+        for sp in scanning_ports:
+            cost = distances[source][sp] + distances[sp][d]
+            if not min_cost or min_cost > cost:
+                min_cost = cost
+                min_path = (sp, d)
     return min_path, min_cost
 
 
-def total_container_cost(G, containers_sent, scanning_ports):
+def total_container_cost(distances, containers_sent, scanning_ports,
+                         destinations):
     """
     Calculates cost of sending all containers along shortest paths
     :param G: graph model with edge weights "cost"
@@ -55,11 +36,12 @@ def total_container_cost(G, containers_sent, scanning_ports):
     if not scanning_ports:
         return None
     for port, num in containers_sent:
-        total_cost += scanning_path(G, port, scanning_ports)[1] * num
+        total_cost += scanning_path(port, scanning_ports, distances,
+                                    destinations)[1] * num
     return total_cost
 
 
-def exhaustive_optimization(G, containers_sent, scanning_ports, scanner_cost):
+def exhaustive_optimization(distances, destinations, containers_sent, scanning_ports, scanner_cost):
     """
 
     :param G: graph model with edge weights "cost"
@@ -74,7 +56,8 @@ def exhaustive_optimization(G, containers_sent, scanning_ports, scanner_cost):
     min_cost = None
     min_sp = None
     for sp in sp_combs:
-        cost = total_container_cost(G, containers_sent, sp)
+        cost = total_container_cost(distances, containers_sent, sp,
+                                    destinations)
         cost = cost and cost + scanner_cost * len(sp)
         if not min_cost or cost < min_cost:
             min_cost = cost

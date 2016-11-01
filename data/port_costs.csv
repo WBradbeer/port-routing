@@ -1,8 +1,8 @@
 Port,NY,Shanghai,Singapore,London,Halifax,Melbourne,Havana
-NY,,,,10,5,20,8
-Shanghai,,,7,,,,
-Singapore,,7,,,,8,
-London,10,,13,,4,,10
-Halifax,5,,,4,,,
-Melbourne,20,,8,,,,11
-Havana,8,,,10,,11,
+NY,0,30,25,10,5,20,8
+Shanghai,30,0,7,15,20,25,28
+Singapore,25,7,0,13,25,8,30
+London,10,15,13,0,4,20,10
+Halifax,5,20,25,4,0,18,20
+Melbourne,20,25,8,20,18,0,11
+Havana,8,28,30,10,20,11,0
