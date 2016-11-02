@@ -23,41 +23,26 @@ def scanning_path(source, scanning_ports, distances, destinations):
 
 def total_container_cost(distances, containers_sent, scanning_ports,
                          destinations):
-    """
-    Calculates cost of sending all containers along shortest paths
-    :param G: graph model with edge weights "cost"
-    :param containers_sent: iterable of tuples containing source ports
-           and number of containers
-    :param scanning_ports: iterable of tuples containing scanning ports
-           and costs
-    :return: cost of shipping all containers
-    """
     total_cost = 0
     if not scanning_ports:
         return None
-    for port, num in containers_sent:
-        total_cost += scanning_path(port, scanning_ports, distances,
-                                    destinations)[1] * num
+    explicit_destinations = containers_sent.columns.values
+    if not destinations:
+        destinations = explicit_destinations
+    for d in explicit_destinations:
+        for p in containers_sent.index:
+            total_cost += scanning_path(p, scanning_ports, distances,
+                                        destinations)[1] * containers_sent[d][p]
     return total_cost
 
 
-def exhaustive_optimization(distances, destinations, containers_sent, scanning_ports, scanner_cost):
-    """
-
-    :param G: graph model with edge weights "cost"
-    :param containers_sent: containers_sent: iterable of tuples containing source ports
-           and number of containers
-    :param scanning_ports: iterable of tuples containing scanning ports
-           and costs
-    :param scanner_cost: cost of adding a scanner to an additional port
-    :return: (optimal arrangement of scanners, cost of arrangement)
-    """
+def exhaustive_optimization(distances, containers_sent, scanning_ports,
+                            scanner_cost, destinations=None):
     sp_combs = powerset(scanning_ports)
     min_cost = None
     min_sp = None
     for sp in sp_combs:
-        cost = total_container_cost(distances, containers_sent, sp,
-                                    destinations)
+        cost = total_container_cost(distances, containers_sent, sp, destinations)
         cost = cost and cost + scanner_cost * len(sp)
         if not min_cost or cost < min_cost:
             min_cost = cost
