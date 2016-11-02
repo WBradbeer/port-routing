@@ -27,9 +27,9 @@ def total_container_cost(distances, containers_sent, scanning_ports,
     if not scanning_ports:
         return None
     explicit_destinations = containers_sent.columns.values
-    if not destinations:
-        destinations = explicit_destinations
     for d in explicit_destinations:
+        if not destinations:
+            destinations = [d]
         for p in containers_sent.index:
             total_cost += scanning_path(p, scanning_ports, distances,
                                         destinations)[1] * containers_sent[d][p]
