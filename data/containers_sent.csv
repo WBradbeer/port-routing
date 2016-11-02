@@ -1,6 +1,4 @@
-Port,NY
-Shanghai,1000
-Singapore,150
-London,300
-Halifax,80
-Melbourne,100
+Port,US1,US2
+S1,10,10
+S2,10,10
+S3,10,10
