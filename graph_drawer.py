@@ -16,7 +16,7 @@ def df_to_edges(cost_df):
 G = nx.DiGraph()
 
 file_path = os.path.abspath(os.path.dirname(__file__))
-edge_costs = pd.read_csv(file_path + "/data/port_costs_trans.csv",
+edge_costs = pd.read_csv(file_path + "/data/port_costs.csv",
                          index_col="Port")
 port_pos = {x[0]: [x[1], x[2]] for x in pd.read_csv(file_path +
                                                     "/data/port_pos.csv",
@@ -27,8 +27,11 @@ edges = df_to_edges(edge_costs)
 G.add_nodes_from(ports)
 G.add_edges_from(edges)
 
-nx.draw(G, pos=port_pos, node_size=1000)
-nx.draw_networkx_labels(G, port_pos, font_size=18)
+edge_labels = {(x[0], x[1]): x[2]['cost'] for x in edges}
+print edge_labels
+nx.draw(G, pos=port_pos, node_size=1000, node_color=['k','b','b','r','k'])
+nx.draw_networkx_labels(G, port_pos, font_size=18, font_color='white')
+nx.draw_networkx_edge_labels(G, port_pos, font_size=12, edge_labels=edge_labels)
 plt.show()
 
 
