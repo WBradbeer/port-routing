@@ -12,7 +12,6 @@ containers_sent = pd.read_csv(file_path + "/data/containers_sent.csv",
 scanning_ports = list(pd.read_csv(file_path + "/data/scanning_ports.csv",
                                   index_col="Port").index)
 distances = pd.read_csv(file_path + "/data/port_costs.csv", index_col="Port")
-destinations = ['NY']
 
 scanner_cost = 100
 
