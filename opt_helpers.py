@@ -57,5 +57,7 @@ def exhaustive_optimization(distances, containers_sent, scanning_ports,
             min_cost_matrix = cost_matrix
     
     costdf = pd.DataFrame(min_cost_matrix, index=scanning_ports)
+    costdf['Scanner_cost'] = [(x in min_sp)*scanner_cost for x in costdf.index]
+    costdf['Total'] = [sum(x) for x in costdf.itertuples(index=False)]
 
     return min_sp, min_cost, costdf

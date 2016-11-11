@@ -17,6 +17,3 @@ scanner_cost = 100
 
 print oh.exhaustive_optimization(distances, containers_sent, scanning_ports,
                                  scanner_cost)
-
-print oh.total_container_cost(distances, containers_sent, ['O1'],
-                              ['D1', 'D2'])
