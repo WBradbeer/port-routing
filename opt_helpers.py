@@ -1,5 +1,7 @@
 from itertools import chain, combinations
 
+import pandas as pd
+
 
 def powerset(iterable):
     """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
@@ -23,16 +25,20 @@ def scanning_path(source, scanning_ports, distances, destinations):
 
 def total_container_cost(distances, containers_sent, scanning_ports,
                          destinations):
+    cost_matrix = {}
     total_cost = 0
     if not scanning_ports:
-        return None
+        return None, None
     explicit_destinations = containers_sent.columns.values
     for d in explicit_destinations:
+        cost_matrix[d] = []
         dest = destinations or [d]
         for p in containers_sent.index:
-            total_cost += scanning_path(p, scanning_ports, distances,
+            cost = scanning_path(p, scanning_ports, distances,
                                         dest)[1] * containers_sent[d][p]
-    return total_cost
+            total_cost += cost
+            cost_matrix[d].append(cost)
+    return total_cost, cost_matrix
 
 
 def exhaustive_optimization(distances, containers_sent, scanning_ports,
@@ -40,10 +46,16 @@ def exhaustive_optimization(distances, containers_sent, scanning_ports,
     sp_combs = powerset(scanning_ports)
     min_cost = None
     min_sp = None
+    min_cost_matrix = None
+
     for sp in sp_combs:
-        cost = total_container_cost(distances, containers_sent, sp, destinations)
+        cost, cost_matrix = total_container_cost(distances, containers_sent, sp, destinations)
         cost = cost and cost + scanner_cost * len(sp)
         if not min_cost or cost < min_cost:
             min_cost = cost
             min_sp = sp
-    return min_sp, min_cost
+            min_cost_matrix = cost_matrix
+    
+    costdf = pd.DataFrame(min_cost_matrix, index=scanning_ports)
+
+    return min_sp, min_cost, costdf
