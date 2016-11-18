@@ -47,10 +47,12 @@ def exhaustive_optimization(distances, containers_sent, scanning_ports,
     min_cost = None
     min_sp = None
     min_cost_matrix = None
+    sp_costs = {}
 
     for sp in sp_combs:
         cost, cost_matrix = total_container_cost(distances, containers_sent, sp, destinations)
         cost = cost and cost + scanner_cost * len(sp)
+        sp_costs[str(arrangement_to_decimal(sp))] = cost
         if not min_cost or cost < min_cost:
             min_cost = cost
             min_sp = sp
@@ -60,4 +62,26 @@ def exhaustive_optimization(distances, containers_sent, scanning_ports,
     costdf['Scanner_cost'] = [(x in min_sp)*scanner_cost for x in costdf.index]
     costdf['Total'] = [sum(x) for x in costdf.itertuples(index=False)]
 
-    return min_sp, min_cost, costdf
+    return min_sp, min_cost, costdf, sp_costs
+
+
+def arrangement_to_decimal(arrangement, pref_len=1):
+    decimal = 0
+    for sp in arrangement:
+        decimal += 2**(int(sp[pref_len:])-1)
+    return decimal
+
+
+def decimal_to_arrangement(decimal, pref='O'):
+    arrangement = set()
+    i = 1
+    while decimal > 0:
+        if decimal % 2:
+            arrangement.add('{}{}'.format(pref, i))
+            decimal -= 1
+        decimal /= 2
+        i += 1
+    return arrangement
+
+
+
