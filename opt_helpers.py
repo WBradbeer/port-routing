@@ -51,8 +51,9 @@ def exhaustive_optimization(distances, containers_sent, scanning_ports,
 
     for sp in sp_combs:
         cost, cost_matrix = total_container_cost(distances, containers_sent, sp, destinations)
-        cost = cost and cost + scanner_cost * len(sp)
+        cost = cost
         sp_costs[str(arrangement_to_decimal(sp))] = cost
+        cost += scanner_cost * len(sp)
         if not min_cost or cost < min_cost:
             min_cost = cost
             min_sp = sp
