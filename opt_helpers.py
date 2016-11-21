@@ -1,5 +1,6 @@
 from itertools import chain, combinations
 
+import matplotlib.pyplot as plt
 import pandas as pd
 
 
@@ -52,8 +53,9 @@ def exhaustive_optimization(distances, containers_sent, scanning_ports,
     for sp in sp_combs:
         cost, cost_matrix = total_container_cost(distances, containers_sent, sp, destinations)
         cost = cost
-        sp_costs[str(arrangement_to_decimal(sp))] = cost
-        cost += scanner_cost * len(sp)
+        if cost:
+            sp_costs[str(arrangement_to_decimal(sp))] = cost
+            cost = scanner_cost * len(sp)
         if not min_cost or cost < min_cost:
             min_cost = cost
             min_sp = sp
@@ -66,10 +68,13 @@ def exhaustive_optimization(distances, containers_sent, scanning_ports,
     return min_sp, min_cost, costdf, sp_costs
 
 
-def arrangement_to_decimal(arrangement, pref_len=1):
+def arrangement_to_decimal(arrangement, pref_len=1, offset=1):
     decimal = 0
     for sp in arrangement:
-        decimal += 2**(int(sp[pref_len:])-1)
+        try:
+            decimal += 2**(int(sp[pref_len:])-offset)
+        except IndexError:
+            decimal += 2 ** (sp-offset)
     return decimal
 
 
@@ -85,4 +90,15 @@ def decimal_to_arrangement(decimal, pref='O'):
     return arrangement
 
 
+def plot_frontier(sp_costs):
+    trans_costs = []
+    sp_count = []
+    for dec, cost in sp_costs.iteritems():
+        if cost:
+            trans_costs.append(cost)
+            sp_count.append(len(decimal_to_arrangement(int(dec))))
+    plt.scatter(trans_costs, sp_count)
+    plt.xlabel("Trans-shipment cost")
+    plt.ylabel("Number of Scanners")
+    plt.show()
 

@@ -6,7 +6,7 @@ import examples
 
 times = []
 start = 2
-stop = 21
+stop = 20
 index = range(start, stop)
 
 for n in index:

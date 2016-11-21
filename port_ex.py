@@ -1,7 +1,9 @@
 import os
 
+import numpy as np
 import pandas as pd
 
+import lp_helpers as lp
 import opt_helpers as oh
 
 
@@ -15,5 +17,7 @@ distances = pd.read_csv(file_path + "/data/port_costs.csv", index_col="Port")
 
 scanner_cost = 100
 
-print oh.exhaustive_optimization(distances, containers_sent, scanning_ports,
-                                 scanner_cost)
+# oh.plot_frontier(oh.exhaustive_optimization(distances, containers_sent, scanning_ports,
+#                                  scanner_cost)[3])
+
+print(np.array(lp.reshape(lp.flatten(np.array(distances)), 5,5))== np.array(distances))
