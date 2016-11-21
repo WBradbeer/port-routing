@@ -11,7 +11,7 @@ def flatten_3(data):
     return flatten_2(flatten_2(data))
 
 
-def reshape(vector, rows, cols):
+def reshape_2D(vector, rows, cols):
     data = []
     for i in range(0, rows):
         data.append([])
@@ -19,6 +19,15 @@ def reshape(vector, rows, cols):
             data[i].append(vector[j + i*cols])
     return data
 
+def reshape_3D(vector, F, D):
+    data = []
+    for i in range(0, F):
+        data.append([])
+        for j in range(0, F):
+            data[i].append([])
+            for k in range(0, D):
+                data[i][j].append(vector[k + j*D + i*F*D])
+    return data
 
 def combine_matrices(d1, d2):
     combined = []
@@ -33,5 +42,5 @@ def combine_matrices(d1, d2):
 
 def sum_on_k(F, D):
     ident = np.identity(F*D)
-    return [flatten_2([[y]*D for y in x]) for x in ident]
+    return [flatten_2([[y]*F for y in x]) for x in ident]
 
