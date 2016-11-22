@@ -17,7 +17,5 @@ distances = pd.read_csv(file_path + "/data/port_costs.csv", index_col="Port")
 
 scanner_cost = 100
 
-# oh.plot_frontier(oh.exhaustive_optimization(distances, containers_sent, scanning_ports,
-#                                  scanner_cost)[3])
-
-print(np.array(lp.reshape(lp.flatten(np.array(distances)), 5,5))== np.array(distances))
+print oh.exhaustive_optimization(distances, containers_sent, scanning_ports,
+                                            scanner_cost)

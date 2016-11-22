@@ -21,5 +21,12 @@ c = lp.flatten_3(lp.combine_matrices(np.array(cost_f), np.array(cost_d)))
 
 b_eq = lp.flatten_2(np.array(containers_sent))
 A_eq = lp.sum_on_k(F,D)
+A_eq.append(lp.scanner_constraints([1, 1, 1], F, D))
+b_eq.append(0)
 
-print lp.reshape_3D(opt.linprog(c, A_eq=A_eq, b_eq=b_eq)['x'], F, D)
+A_ub = np.identity(F*F*D) * -1
+b_ub = F*F*D*[0]
+
+print opt.linprog(c, A_eq=A_eq, b_eq=b_eq, A_ub=A_ub, b_ub=b_ub)
+
+

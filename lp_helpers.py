@@ -44,3 +44,8 @@ def sum_on_k(F, D):
     ident = np.identity(F*D)
     return [flatten_2([[y]*F for y in x]) for x in ident]
 
+
+def scanner_constraints(scanning, F, D):
+    scanning = [abs(x - 1) for x in scanning]
+    return flatten_2([[x]*D for x in scanning]*F)
+
