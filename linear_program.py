@@ -17,7 +17,9 @@ containers_sent = pd.read_csv(file_path + "/data/containers_sent.csv",
 F = len(cost_f)
 D = len(list(cost_d))
 
+x = lp.generate_x(F,D)
 c = lp.flatten_3(lp.combine_matrices(np.array(cost_f), np.array(cost_d)))
+print lp.show_eq(x,c,"z")
 
 b_eq = lp.flatten_2(np.array(containers_sent))
 A_eq = lp.sum_on_k(F,D)

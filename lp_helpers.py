@@ -33,10 +33,10 @@ def combine_matrices(d1, d2):
     combined = []
     for i in range(0, len(d1)):
         combined.append([])
-        for j in range(0, len(d1[i])):
+        for k in range(0, len(d1[i])):
             combined[i].append([])
-            for k in range(0, len(d2[j])):
-                combined[i][j].append(d2[j][k])
+            for j in range(0, len(d2[k])):
+                combined[i][k].append(d2[k][j])
     return combined
 
 
@@ -49,3 +49,17 @@ def scanner_constraints(scanning, F, D):
     scanning = [abs(x - 1) for x in scanning]
     return flatten_2([[x]*D for x in scanning]*F)
 
+def generate_x(F,D):
+    x = []
+    for i in range(0, F):
+        for k in range(0, F):
+            for j in range(0, D):
+                x.append("X({},{},{})".format(i+1, k+1, j+1))
+    return x
+
+
+def show_eq(x, coefs, b):
+    eq = ""
+    for i in range(0, len(x)):
+        eq += str(coefs[i]) + "*" + x[i] + " "
+    return eq + "= " + str(b)
