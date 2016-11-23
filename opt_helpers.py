@@ -55,7 +55,7 @@ def exhaustive_optimization(distances, containers_sent, scanning_ports,
         cost = cost
         if cost:
             sp_costs[str(arrangement_to_decimal(sp))] = cost
-            cost = scanner_cost * len(sp)
+            cost += scanner_cost * len(sp)
         if not min_cost or cost < min_cost:
             min_cost = cost
             min_sp = sp

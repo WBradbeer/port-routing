@@ -15,7 +15,13 @@ scanning_ports = list(pd.read_csv(file_path + "/data/scanning_ports.csv",
                                   index_col="Port").index)
 distances = pd.read_csv(file_path + "/data/port_costs.csv", index_col="Port")
 
-scanner_cost = 100
+scanner_cost = 10000
 
-print oh.exhaustive_optimization(distances, containers_sent, scanning_ports,
-                                            scanner_cost)
+result = oh.exhaustive_optimization(distances, containers_sent, scanning_ports,
+                                    scanner_cost)
+
+print result[0]
+
+print result[3][str(oh.arrangement_to_decimal(('O1', 'O4', 'O7')))]
+
+oh.plot_frontier(result[3])
