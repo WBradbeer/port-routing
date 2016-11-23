@@ -90,7 +90,7 @@ def decimal_to_arrangement(decimal, pref='O'):
     return arrangement
 
 
-def plot_frontier(sp_costs):
+def plot_frontier(sp_costs, highlight=None):
     trans_costs = []
     sp_count = []
     for dec, cost in sp_costs.iteritems():
@@ -100,5 +100,10 @@ def plot_frontier(sp_costs):
     plt.scatter(trans_costs, sp_count)
     plt.xlabel("Trans-shipment cost")
     plt.ylabel("Number of Scanners")
+    if highlight:
+        plt.scatter(*highlight_point(sp_costs, highlight), s=50.0, color='red')
     plt.show()
 
+
+def highlight_point(sp_costs, highlight):
+    return sp_costs[str(arrangement_to_decimal(highlight))], len(highlight)

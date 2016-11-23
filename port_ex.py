@@ -24,4 +24,5 @@ print result[0]
 
 print result[3][str(oh.arrangement_to_decimal(('O1', 'O4', 'O7')))]
 
-oh.plot_frontier(result[3])
+
+oh.plot_frontier(result[3], highlight=('O1', 'O4', 'O8'))
