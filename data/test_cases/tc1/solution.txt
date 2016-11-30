@@ -1,0 +1,2 @@
+Scanner Cost = 150
+Optimal Solution: (('F2'), 850)

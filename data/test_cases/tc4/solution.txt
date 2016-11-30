@@ -1,0 +1,11 @@
+Scanner Cost = 100
+Optimal Soln: (('F1', 'F2', 'F3', 'F4'), 37150)
+
+Scanner Cost = 500
+Optimal Soln: (('F1', 'F2', 'F4'), 38450)
+
+Scanner Cost = 2000
+Optimal Soln: (('F2', 'F4'), 42050)
+
+Scanner Cost = 4000
+Optimal Soln: (('F2',), 45150)
