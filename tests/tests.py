@@ -3,6 +3,7 @@ import unittest
 
 import pandas as pd
 
+import lp_helpers as lp
 import opt_helpers as oh
 
 
@@ -59,3 +60,52 @@ class OptTestCase(unittest.TestCase):
 
     def test_highlight_point(self):
         self.assertEqual(oh.highlight_point({'1': 1}, ('O1',)), (1,1))
+
+
+class LPTestCase(unittest.TestCase):
+    def test_flatten_2(self):
+        self.assertEqual(lp.flatten_2([[1, 2], [3]]), [1,2,3])
+
+    def test_flatten_2_empty(self):
+        self.assertEqual(lp.flatten_2([[]]), [])
+
+    def test_flatten_3(self):
+        self.assertEqual(lp.flatten_3([[[1], [2]],[[3, 4]]]), [1,2,3,4])
+
+    def test_flatten_3_empty(self):
+        self.assertEqual(lp.flatten_3([[[]]]), [])
+
+    def test_reshape_2D(self):
+        self.assertEqual(lp.reshape_2D([1,2,3,4],2,2), [[1,2],[3,4]])
+
+    def test_reshape_3D(self):
+        self.assertEqual(lp.reshape_3D(range(1,9),2,2),
+                         [[[1,2],[3,4]],[[5,6],[7,8]]])
+
+    def test_combine_matrices(self):
+        self.assertEqual(lp.combine_matrices([[1,2],[3,4]],[[1],[2]]),
+                         [[[2],[4]],[[4],[6]]])
+
+    def test_sum_on_k(self):
+        mat = [[1.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0],
+               [0.0,1.0,0.0,1.0,0.0,0.0,0.0,0.0],
+               [0.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0],
+               [0.0,0.0,0.0,0.0,0.0,1.0,0.0,1.0]]
+        result = lp.sum_ij_over_k(2,2)
+        [self.assertSequenceEqual(mat[i],
+                                  list(result[i])) for i in range(0,len(mat))]
+
+    def test_scanner_constraints(self):
+        self.assertSequenceEqual(lp.scanner_constraints((1,0),2,2),
+                                 [0,0,1,1,0,0,1,1])
+
+    def test_generate_x(self):
+        xs = ['X(1,1,1)', 'X(1,1,2)', 'X(1,2,1)', 'X(1,2,2)', 'X(2,1,1)',
+              'X(2,1,2)', 'X(2,2,1)', 'X(2,2,2)']
+        self.assertEqual(lp.generate_x(2,2),xs)
+
+    def test_show_eq(self):
+        xs = ['X(1,1,1)', 'X(1,1,2)', 'X(1,2,1)', 'X(1,2,2)', 'X(2,1,1)',
+              'X(2,1,2)', 'X(2,2,1)', 'X(2,2,2)']
+        eqn = """1*X(1,1,1) 1*X(1,1,2) 1*X(1,2,1) 1*X(1,2,2) 1*X(2,1,1) 1*X(2,1,2) 1*X(2,2,1) 1*X(2,2,2) = 0"""
+        self.assertEqual(lp.show_eq(xs, [1]*len(xs), 0), eqn)

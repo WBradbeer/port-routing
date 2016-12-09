@@ -36,13 +36,15 @@ def combine_matrices(d1, d2):
         for k in range(0, len(d1[i])):
             combined[i].append([])
             for j in range(0, len(d2[k])):
-                combined[i][k].append(d2[k][j])
+                combined[i][k].append(d1[i][k] + d2[k][j])
     return combined
 
 
-def sum_on_k(F, D):
-    ident = np.identity(F*D)
-    return [flatten_2([[y]*F for y in x]) for x in ident]
+def sum_ij_over_k(F, D):
+    block = np.tile(np.identity(D), F)
+    zeros = np.zeros_like(block)
+    id_f = np.identity(F)
+    return flatten_2([np.hstack((block if col == 1 else zeros for col in row)) for row in id_f])
 
 
 def scanner_constraints(scanning, F, D):
