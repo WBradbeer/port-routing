@@ -1,3 +1,4 @@
+import copy
 import os
 
 import numpy as np
@@ -6,7 +7,6 @@ from scipy import optimize as opt
 
 import lp_helpers as lp
 
-print np.matrix(lp.sum_ij_over_k(2,2))
 
 file_path = os.path.abspath(os.path.dirname(__file__))
 
@@ -20,18 +20,21 @@ D = len(list(cost_d))
 
 x = lp.generate_x(F,D)
 c = lp.flatten_3(lp.combine_matrices(np.array(cost_f), np.array(cost_d)))
-print lp.show_eq(x,c,"z")
 
 b_eq = lp.flatten_2(np.array(containers_sent))
-A_eq = lp.sum_ij_over_k(F,D)
-A_eq.append(lp.scanner_constraints([0, 0, 1], F, D))
+A_sum = lp.sum_ij_over_k(F,D)
 b_eq.append(0)
-
 A_ub = np.identity(F*F*D) * -1
 b_ub = F*F*D*[0]
+results = [None] * 2**F
+i = 0
+for comb in lp.gen_scanning_combs(F):
+    A_eq = copy.copy(A_sum)
+    A_eq.append(lp.scanner_constraints(comb[::-1], F, D))
+    results[i] = opt.linprog(c, A_eq=A_eq, b_eq=b_eq, A_ub=A_ub, b_ub=b_ub)
+    i += 1
 
+print(results)
 
-
-print opt.linprog(c, A_eq=A_eq, b_eq=b_eq, A_ub=A_ub, b_ub=b_ub)
 
 

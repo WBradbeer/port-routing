@@ -1,3 +1,4 @@
+import itertools
 import numpy as np
 
 def flatten_2(data):
@@ -65,3 +66,8 @@ def show_eq(x, coefs, b):
     for i in range(0, len(x)):
         eq += str(coefs[i]) + "*" + x[i] + " "
     return eq + "= " + str(b)
+
+
+def gen_scanning_combs(F):
+    for comb in itertools.product([0,1], repeat=F):
+        yield comb
