@@ -28,18 +28,20 @@ def setup(cost_f, cost_d, containers_sent):
     b_eq.append(0)
     A_ub = np.identity(F * F * D) * -1
     b_ub = F * F * D * [0]
-    return F, D, c, A_sum, b_eq, A_ub, b_ub
-
-
-def run(F, D, c, A_sum, b_eq, A_ub, b_ub):
-    results = [None] * 2 ** F
-    i = 0
+    A_eqs = []
     for comb in lp.gen_scanning_combs(F):
         A_eq = copy.copy(A_sum)
         A_eq.append(lp.scanner_constraints(comb[::-1], F, D))
+        A_eqs.append(A_eq)
+    return F, c, A_eqs, b_eq, A_ub, b_ub
+
+
+def run(F, c, A_eqs, b_eq, A_ub, b_ub):
+    results = [None] * 2 ** F
+    i = 0
+    for A_eq in A_eqs:
         results[i] = opt.linprog(c, A_eq=A_eq, b_eq=b_eq, A_ub=A_ub, b_ub=b_ub)
         i += 1
-
     return results
 
 
