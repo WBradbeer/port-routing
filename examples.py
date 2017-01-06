@@ -2,6 +2,7 @@ import math
 
 import pandas as pd
 
+import linear_program
 import opt_helpers as oh
 
 def generate_containers(source_num, dest_num, sent=1):
@@ -23,7 +24,7 @@ def generate_distances(source_num, dest_num, dist=1):
                 distances[i].append(dist)
     return pd.DataFrame(distances)
 
-def run_example_n(n, scanner_cost=100):
+def run_exhaustive_n(n, scanner_cost=100):
     source = n
     dest = int(math.ceil(n / 4.0))
     containers = generate_containers(source, dest)
@@ -31,3 +32,14 @@ def run_example_n(n, scanner_cost=100):
     sps = list(containers.index)
     return oh.exhaustive_optimization(distances, containers, sps,
                                scanner_cost)
+
+def run_lp_n(n, scanner_cost=100):
+    source = n
+    dest = int(math.ceil(n / 4.0))
+    containers = generate_containers(source, dest)
+    distances = generate_distances(source, dest)
+
+
+    sps = range(0, source)
+    dp = range(source, source + dest)
+    return linear_program.linear_prog(distances[sps][:-dest], distances[dp], containers)

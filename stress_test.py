@@ -6,12 +6,14 @@ import examples
 
 times = []
 start = 2
-stop = 20
+stop = 10
 index = range(start, stop)
+
+
 
 for n in index:
     t = time.clock()
-    examples.run_example_n(n)
+    examples.run_lp_n(n)
     times.append(time.clock() - t)
 
 pd.DataFrame(times,index=index

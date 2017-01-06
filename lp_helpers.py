@@ -71,3 +71,5 @@ def show_eq(x, coefs, b):
 def gen_scanning_combs(F):
     for comb in itertools.product([0,1], repeat=F):
         yield comb
+
+
