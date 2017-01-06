@@ -16,7 +16,7 @@ containers_sent = pd.read_csv(file_path + "/data/containers_sent_lp.csv",
                               index_col="Port")
 
 
-def linear_prog(cost_f, cost_d, containers_sent):
+def setup(cost_f, cost_d, containers_sent):
     F = len(cost_f)
     D = len(list(cost_d))
 
@@ -28,6 +28,10 @@ def linear_prog(cost_f, cost_d, containers_sent):
     b_eq.append(0)
     A_ub = np.identity(F * F * D) * -1
     b_ub = F * F * D * [0]
+    return F, D, c, A_sum, b_eq, A_ub, b_ub
+
+
+def run(F, D, c, A_sum, b_eq, A_ub, b_ub):
     results = [None] * 2 ** F
     i = 0
     for comb in lp.gen_scanning_combs(F):

@@ -33,7 +33,7 @@ def run_exhaustive_n(n, scanner_cost=100):
     return oh.exhaustive_optimization(distances, containers, sps,
                                scanner_cost)
 
-def run_lp_n(n, scanner_cost=100):
+def run_setup_n(n, scanner_cost=100):
     source = n
     dest = int(math.ceil(n / 4.0))
     containers = generate_containers(source, dest)
@@ -42,4 +42,4 @@ def run_lp_n(n, scanner_cost=100):
 
     sps = range(0, source)
     dp = range(source, source + dest)
-    return linear_program.linear_prog(distances[sps][:-dest], distances[dp], containers)
+    return linear_program.setup(distances[sps][:-dest], distances[dp], containers)
