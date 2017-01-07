@@ -1,5 +1,0 @@
-Scanner Cost = 120
-Optimal Soln: (('F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10'), 2450)
-
-Scanner Cost = 130
-Optimal Soln: (('F1'), 2505)
