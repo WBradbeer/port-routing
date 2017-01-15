@@ -45,7 +45,7 @@ def run(F, c, A_eqs, b_eq, A_ub, b_ub):
         i += 1
     return results
 
-def run_times(F, c, A_eqs, b_eq, A_ub, b_ub):
+def run_times(F, c, A_eqs, b_eq, A_ub, b_ub, n=None):
     times = [None] * 2 ** F
     i = 0
     if n:
