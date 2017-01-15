@@ -7,7 +7,7 @@ import linear_program as lp
 
 times = []
 start = 2
-stop = 10
+stop = 15
 index = range(start, stop)
 
 

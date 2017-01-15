@@ -1,5 +1,6 @@
 import copy
 import os
+import time
 
 import numpy as np
 import pandas as pd
@@ -43,6 +44,18 @@ def run(F, c, A_eqs, b_eq, A_ub, b_ub):
         results[i] = opt.linprog(c, A_eq=A_eq, b_eq=b_eq, A_ub=A_ub, b_ub=b_ub)
         i += 1
     return results
+
+def run_times(F, c, A_eqs, b_eq, A_ub, b_ub):
+    times = [None] * 2 ** F
+    i = 0
+    if n:
+        A_eqs = A_eqs[::len(A_eqs)/n]
+    for A_eq in A_eqs:
+        t = time.clock()
+        opt.linprog(c, A_eq=A_eq, b_eq=b_eq, A_ub=A_ub, b_ub=b_ub)
+        times[i] = time.clock() - t
+        i += 1
+    return times
 
 
 # linear_prog(cost_f, cost_d, containers_sent)
