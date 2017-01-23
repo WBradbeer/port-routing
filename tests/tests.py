@@ -9,6 +9,7 @@ import opt_helpers as oh
 
 FILE_PATH = os.path.abspath(os.path.dirname(__file__))
 
+
 class OptTestCase(unittest.TestCase):
     def setUp(self):
         case_path =  "/../data/test_cases/tc1/"
@@ -56,7 +57,7 @@ class OptTestCase(unittest.TestCase):
 
     def test_decimal_to_arrangement(self):
         arr = oh.decimal_to_arrangement(11)
-        self.assertEqual(arr, set(("O1", "O2", "O4")))
+        self.assertEqual(arr, {"O1", "O2", "O4"})
 
     def test_highlight_point(self):
         self.assertEqual(oh.highlight_point({'1': 1}, ('O1',)), (1,1))

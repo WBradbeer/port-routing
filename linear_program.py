@@ -21,7 +21,6 @@ def setup(cost_f, cost_d, containers_sent):
     F = len(cost_f)
     D = len(list(cost_d))
 
-    x = lp.generate_x(F, D)
     c = lp.flatten_3(lp.combine_matrices(np.array(cost_f), np.array(cost_d)))
 
     b_eq = lp.flatten_2(np.array(containers_sent))
@@ -44,6 +43,40 @@ def run(F, c, A_eqs, b_eq, A_ub, b_ub):
         results[i] = opt.linprog(c, A_eq=A_eq, b_eq=b_eq, A_ub=A_ub, b_ub=b_ub)
         i += 1
     return results
+
+
+def run_octave(F, c, A_eqs, b_eq, A_ub, b_ub):
+    import oct2py
+    oc = oct2py.Oct2Py()
+    results = [None] * 2 ** F
+    ctype = 'S' * len(b_eq) + 'U' * len(b_ub)
+    b = copy.copy(b_eq)
+    b.extend(b_ub)
+    lb = [0] * len(c)
+    ub = [2**12] * len(c)
+    i = 0
+    for A_eq in A_eqs:
+        A_eq.extend(A_ub)
+        A_eq = [list(row) for row in A_eq]
+        results[i] = oc.glpk(c, A_eq, b, lb, ub, ctype)
+        i += 1
+    return results
+
+
+def run_matlab(F, c, A_eqs, b_eq, A_ub, b_ub):
+    import matlab.engine
+    eng = matlab.engine.start_matlab()
+    results = [None] * 2 ** F
+    b = copy.copy(b_eq)
+    b.extend(b_ub)
+    i = 0
+    for A_eq in A_eqs:
+        A_eq.extend(A_ub)
+        A_eq = [list(row) for row in A_eq]
+        results[i] = eng.linprog(c, A_ub, b_ub, A_eq, b_eq)
+        i += 1
+    return results
+
 
 def run_times(F, c, A_eqs, b_eq, A_ub, b_ub, n=None):
     times = [None] * 2 ** F

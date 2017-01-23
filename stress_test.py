@@ -7,7 +7,7 @@ import linear_program as lp
 
 times = []
 start = 2
-stop = 15
+stop = 6
 index = range(start, stop)
 
 
@@ -16,7 +16,7 @@ for n in index:
     t = time.clock()
     setup = examples.run_setup_n(n)
     t1 = time.clock() - t
-    lp.run(*setup)
+    lp.run_octave(*setup)
     t2 = time.clock() - t1
     times.append([t1, t2])
 
