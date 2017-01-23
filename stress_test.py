@@ -16,7 +16,7 @@ for n in index:
     t = time.clock()
     setup = examples.run_setup_n(n)
     t1 = time.clock() - t
-    lp.run_octave(*setup)
+    lp.run_matlab(*setup)
     t2 = time.clock() - t1
     times.append([t1, t2])
 

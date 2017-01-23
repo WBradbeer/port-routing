@@ -25,9 +25,9 @@ def setup(cost_f, cost_d, containers_sent):
 
     b_eq = lp.flatten_2(np.array(containers_sent))
     A_sum = lp.sum_ij_over_k(F, D)
-    b_eq.append(0)
-    A_ub = np.identity(F * F * D) * -1
-    b_ub = F * F * D * [0]
+    b_eq.append(0.0)
+    A_ub = np.identity(F * F * D) * -1.0
+    b_ub = F * F * D * [0.0]
     A_eqs = []
     for comb in lp.gen_scanning_combs(F):
         A_eq = copy.copy(A_sum)
@@ -66,14 +66,19 @@ def run_octave(F, c, A_eqs, b_eq, A_ub, b_ub):
 def run_matlab(F, c, A_eqs, b_eq, A_ub, b_ub):
     import matlab.engine
     eng = matlab.engine.start_matlab()
+    lb = matlab.double([0] * len(c))
     results = [None] * 2 ** F
-    b = copy.copy(b_eq)
-    b.extend(b_ub)
+    b_eq = matlab.double(initializer=b_eq)
+    b_ub = matlab.double(initializer=b_ub)
+    c = matlab.double(initializer=c)
+    A_ub = [list(row) for row in A_ub]
+    A_ub = matlab.double(initializer=A_ub)
+    
     i = 0
     for A_eq in A_eqs:
-        A_eq.extend(A_ub)
         A_eq = [list(row) for row in A_eq]
-        results[i] = eng.linprog(c, A_ub, b_ub, A_eq, b_eq)
+        A_eq = matlab.double(initializer=A_eq)
+        results[i] = eng.linprog(c, A_ub, b_ub, A_eq, b_eq, lb)
         i += 1
     return results
 
