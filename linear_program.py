@@ -1,4 +1,5 @@
 import copy
+import itertools
 import os
 import time
 
@@ -17,7 +18,7 @@ containers_sent = pd.read_csv(file_path + "/data/containers_sent_lp.csv",
                               index_col="Port")
 
 
-def setup(cost_f, cost_d, containers_sent):
+def setup_fixed(cost_f, cost_d, containers_sent, n=None):
     F = len(cost_f)
     D = len(list(cost_d))
 
@@ -29,11 +30,65 @@ def setup(cost_f, cost_d, containers_sent):
     A_ub = np.identity(F * F * D) * -1.0
     b_ub = F * F * D * [0.0]
     A_eqs = []
-    for comb in lp.gen_scanning_combs(F):
+    combs = lp.gen_scanning_combs(F)
+    if n:
+        combs = itertools.islice(combs, 0, None, 2**F/n)
+    for comb in combs:
         A_eq = copy.copy(A_sum)
         A_eq.append(lp.scanner_constraints(comb[::-1], F, D))
         A_eqs.append(A_eq)
     return F, c, A_eqs, b_eq, A_ub, b_ub
+
+
+def setup_variable(cost_f, cost_d, containers_sent, n=None):
+    F = len(cost_f)
+    D = len(list(cost_d))
+
+    c = lp.flatten_2(cost_f) + lp.flatten_2(cost_d)
+
+    b_eq = lp.flatten_2(np.array(containers_sent))
+    A_sum = lp.sum_ij_over_k(F, D)
+    b_eq.append(0)
+    A_ub = np.identity(F * F + F * D) * -1
+    b_ub = (F * F + F * D) * [0]
+    A_eqs = []
+    combs = lp.gen_scanning_combs(F)
+    if n:
+        combs = itertools.islice(combs, 0, None, 2**F/n)
+    for comb in combs:
+        A_eq = copy.copy(A_sum)
+        A_eq.append(lp.scanner_constraints(comb[::-1], F, D))
+        A_eqs.append(A_eq)
+    return F, c, A_eqs, b_eq, A_ub, b_ub
+
+def setup_times(cost_f, cost_d, containers_sent):
+    F = len(cost_f)
+    D = len(list(cost_d))
+    t = time.clock()
+    x = lp.generate_x(F, D)
+    t1 = time.clock() - t
+    t = time.clock()
+    c = lp.flatten_3(lp.combine_matrices(np.array(cost_f), np.array(cost_d)))
+    t2 = time.clock() - t
+    t = time.clock()
+    b_eq = lp.flatten_2(np.array(containers_sent))
+    t3 = time.clock() - t
+    t = time.clock()
+    A_sum = lp.sum_ij_over_k(F, D)
+    t4 = time.clock() - t
+    t = time.clock()
+    b_eq.append(0)
+    A_ub = np.identity(F * F * D) * -1
+    b_ub = F * F * D * [0]
+    A_eqs = []
+    t5 = time.clock() - t
+    t = time.clock()
+    for comb in lp.gen_scanning_combs(F):
+        A_eq = A_sum[:]
+        A_eq.append(lp.scanner_constraints(comb[::-1], F, D))
+        A_eqs.append(A_eq)
+    t6 = time.clock() - t
+    return t1, t2, t3, t4, t5, t6
 
 
 def run(F, c, A_eqs, b_eq, A_ub, b_ub):

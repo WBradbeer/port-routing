@@ -52,6 +52,13 @@ def sum_ij_over_k(F, D):
     return flatten_2([np.hstack((block if col == 1 else zeros for col in row)
                                 ) for row in id_f])
 
+def row_sums(row_num, col_num):
+    ident = np.identity(row_num)
+    return [flatten_2([[i] * col_num for i in ident_row]) for ident_row in ident]
+
+def col_sums(row_num, col_num):
+    ident = np.identity(col_num)
+    return np.hstack((ident for i in range(0, row_num)))
 
 def scanner_constraints(scanning, F, D):
     scanning = [abs(x - 1) for x in scanning]

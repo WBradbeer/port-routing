@@ -110,3 +110,11 @@ class LPTestCase(unittest.TestCase):
               'X(2,1,2)', 'X(2,2,1)', 'X(2,2,2)']
         eqn = """1*X(1,1,1) 1*X(1,1,2) 1*X(1,2,1) 1*X(1,2,2) 1*X(2,1,1) 1*X(2,1,2) 1*X(2,2,1) 1*X(2,2,2) = 0"""
         self.assertEqual(lp.show_eq(xs, [1]*len(xs), 0), eqn)
+
+    def test_row_sums(self):
+        sums = lp.row_sums(2,3)
+        self.assertEqual(sums, [[1,1,1,0,0,0],[0,0,0,1,1,1]])
+
+    def test_col_sums(self):
+        sums = [list(x) for x in lp.col_sums(2,3)]
+        self.assertEqual(sums, [[1,0,0,1,0,0],[0,1,0,0,1,0],[0,0,1,0,0,1]])
