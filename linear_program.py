@@ -17,7 +17,6 @@ cost_d = pd.read_csv(file_path + "/data/port_cost_d.csv", index_col="Port")
 containers_sent = pd.read_csv(file_path + "/data/containers_sent_lp.csv",
                               index_col="Port")
 
-
 def setup_fixed(cost_f, cost_d, containers_sent, n=None):
     F = len(cost_f)
     D = len(list(cost_d))
@@ -40,26 +39,30 @@ def setup_fixed(cost_f, cost_d, containers_sent, n=None):
     return F, c, A_eqs, b_eq, A_ub, b_ub
 
 
-def setup_variable(cost_f, cost_d, containers_sent, n=None):
+def setup_variable(cost_f, cost_d, containers_sent, scanner_capacity=10000):
     F = len(cost_f)
     D = len(list(cost_d))
 
-    c = lp.flatten_2(cost_f) + lp.flatten_2(cost_d)
+    c = lp.flatten_2(np.array(cost_f)) + lp.flatten_2(np.array(cost_d))
 
-    b_eq = lp.flatten_2(np.array(containers_sent))
-    A_sum = lp.sum_ij_over_k(F, D)
-    b_eq.append(0)
+    # constraint: all containers scanned
+    b_eq = np.array([sum(x) for x in np.array(containers_sent)])
+    A_eq = np.hstack([lp.row_sums(F,F), np.zeros((F,F*D))])
+
+    # constraint: scanning ports inflow = outflow
+
+    A_eq = np.vstack((A_eq, np.hstack([lp.col_sums(F,F), np.array(lp.row_sums(F,D)) * -1])))
+    b_eq = np.concatenate([b_eq, [0] * F])
+
+    # constraint: non negativity
     A_ub = np.identity(F * F + F * D) * -1
     b_ub = (F * F + F * D) * [0]
-    A_eqs = []
-    combs = lp.gen_scanning_combs(F)
-    if n:
-        combs = itertools.islice(combs, 0, None, 2**F/n)
-    for comb in combs:
-        A_eq = copy.copy(A_sum)
-        A_eq.append(lp.scanner_constraints(comb[::-1], F, D))
-        A_eqs.append(A_eq)
-    return F, c, A_eqs, b_eq, A_ub, b_ub
+
+    # constraint: scanner_capacity not exceeded
+    A_ub = np.vstack([A_ub, np.hstack([lp.col_sums(F,F), np.zeros((F,F*D))])])
+    b_ubs = lp.gen_scanning_bound(lp.gen_scanning_combs(F), scanner_capacity, base=b_ub)
+
+    return F, c, A_eq, b_eq, A_ub, b_ubs
 
 def setup_times(cost_f, cost_d, containers_sent):
     F = len(cost_f)
@@ -99,6 +102,14 @@ def run(F, c, A_eqs, b_eq, A_ub, b_ub):
         i += 1
     return results
 
+
+def run_variable(F, c, A_eq, b_eq, A_ub, b_ubs):
+    results = [None] * 2 ** F
+    i = 0
+    for b_ub in b_ubs:
+        results[i] = opt.linprog(c, A_eq=A_eq, b_eq=b_eq, A_ub=A_ub, b_ub=b_ub)
+        i += 1
+    return results
 
 def run_octave(F, c, A_eqs, b_eq, A_ub, b_ub):
     import oct2py
@@ -149,6 +160,3 @@ def run_times(F, c, A_eqs, b_eq, A_ub, b_ub, n=None):
         times[i] = time.clock() - t
         i += 1
     return times
-
-
-# linear_prog(cost_f, cost_d, containers_sent)

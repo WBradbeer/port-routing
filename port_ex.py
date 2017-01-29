@@ -18,6 +18,6 @@ distances = pd.read_csv(file_path + "/data/port_costs_lp.csv", index_col="Port")
 scanner_cost = 10000
 
 result = oh.exhaustive_optimization(distances, containers_sent, scanning_ports,
-                                    scanner_cost)
+                                    scanner_cost, destinations=('D1', 'D2'))
 
-print result[3]
+print result

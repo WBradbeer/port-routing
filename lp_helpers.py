@@ -64,7 +64,6 @@ def scanner_constraints(scanning, F, D):
     scanning = [abs(x - 1) for x in scanning]
     return flatten_2([[x]*D for x in scanning]*F)
 
-
 def generate_x(F, D):
     x = []
     for i in range(0, F):
@@ -84,3 +83,9 @@ def show_eq(x, coefs, b):
 def gen_scanning_combs(F):
     for comb in itertools.product([0,1], repeat=F):
         yield comb
+
+
+def gen_scanning_bound(combs, scanner_capacity, base=[]):
+    for comb in combs:
+        yield np.append(base, np.array(comb)*scanner_capacity)
+
