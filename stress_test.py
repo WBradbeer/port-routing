@@ -7,17 +7,18 @@ import linear_program as lp
 
 times = []
 start = 2
-stop = 6
+stop = 15
 index = range(start, stop)
 
 
 
 for n in index:
     t = time.clock()
-    setup = examples.run_setup_n(n)
+    setup = examples.run_setup_n(n, times=True, setup=lp.setup_variable)
     t1 = time.clock() - t
-    lp.run_matlab(*setup)
+    lp.run_variable(*setup)
     t2 = time.clock() - t1
+    print str(n) + ': ' + str(t1) + ', ' + str(t2)
     times.append([t1, t2])
 
 pd.DataFrame(times, index=index

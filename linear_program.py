@@ -39,7 +39,7 @@ def setup_fixed(cost_f, cost_d, containers_sent, n=None):
     return F, c, A_eqs, b_eq, A_ub, b_ub
 
 
-def setup_variable(cost_f, cost_d, containers_sent, scanner_capacity=10000):
+def setup_variable(cost_f, cost_d, containers_sent, scanner_capacity=10000, n=None):
     F = len(cost_f)
     D = len(list(cost_d))
 
@@ -64,7 +64,7 @@ def setup_variable(cost_f, cost_d, containers_sent, scanner_capacity=10000):
 
     return F, c, A_eq, b_eq, A_ub, b_ubs
 
-def setup_times(cost_f, cost_d, containers_sent):
+def setup_times(cost_f, cost_d, containers_sent, n=None):
     F = len(cost_f)
     D = len(list(cost_d))
     t = time.clock()
