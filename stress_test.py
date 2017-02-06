@@ -7,14 +7,14 @@ import linear_program as lp
 
 times = []
 start = 2
-stop = 15
+stop = 14
 index = range(start, stop)
 
 
 
 for n in index:
     t = time.clock()
-    setup = examples.run_setup_n(n, times=True, setup=lp.setup_variable)
+    setup = examples.run_setup_n(n, setup=lp.setup_variable)
     t1 = time.clock() - t
     lp.run_variable(*setup)
     t2 = time.clock() - t1

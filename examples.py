@@ -33,13 +33,12 @@ def run_exhaustive_n(n, scanner_cost=100):
     return oh.exhaustive_optimization(distances, containers, sps,
                                scanner_cost)
 
-def run_setup_n(n, scanner_cost=100, times=False, sample=None, setup=linear_program.setup_fixed):
+def run_setup_n(n, sample=None, setup=linear_program.setup_fixed):
     source = n
     dest = int(math.ceil(n / 4.0))
     containers = generate_containers(source, dest)
     distances = generate_distances(source, dest)
-
-
     sps = range(0, source)
     dp = range(source, source + dest)
-    return setup(distances[sps][:-dest], distances[dp][:-dest], containers, n=sample)
+    return setup(distances[sps][:-dest], distances[dp][:-dest], containers, port_capacities=[1000]*source,
+                 dest_capacities=[1000]*dest, n=sample)

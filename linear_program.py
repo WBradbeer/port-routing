@@ -17,7 +17,7 @@ cost_d = pd.read_csv(file_path + "/data/port_cost_d.csv", index_col="Port")
 containers_sent = pd.read_csv(file_path + "/data/containers_sent_lp.csv",
                               index_col="Port")
 
-def setup_fixed(cost_f, cost_d, containers_sent, n=None):
+def setup_fixed(cost_f, cost_d, containers_sent, port_capacities=None, dest_capacities=None,n=None):
     F = len(cost_f)
     D = len(list(cost_d))
 
@@ -46,7 +46,7 @@ def setup_variable(cost_f, cost_d, containers_sent, port_capacities, dest_capaci
     c = lp.flatten_2(np.array(cost_f)) + lp.flatten_2(np.array(cost_d))
 
     # constraint: all containers scanned
-    b_eq = containers_sent
+    b_eq = containers_sent[0]
     A_eq = np.hstack([lp.row_sums(F,F), np.zeros((F,F*D))])
 
     # constraint: scanning ports inflow = outflow
@@ -71,7 +71,7 @@ def setup_variable(cost_f, cost_d, containers_sent, port_capacities, dest_capaci
 
     return F, c, A_eq, b_eq, A_ub, b_ubs
 
-def setup_times(cost_f, cost_d, containers_sent, n=None):
+def setup_times(cost_f, cost_d, containers_sent, port_capacities=None, dest_capacities=None, n=None):
     F = len(cost_f)
     D = len(list(cost_d))
     t = time.clock()
