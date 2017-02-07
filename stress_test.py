@@ -7,16 +7,17 @@ import linear_program as lp
 
 times = []
 start = 2
-stop = 15
+stop = 8
 index = range(start, stop)
 
-
+import matlab.engine
+eng = matlab.engine.start_matlab()
 
 for n in index:
     t = time.clock()
-    setup = examples.run_setup_n(n, times=True, setup=lp.setup_variable)
+    setup = examples.run_setup_n(n, times=True, setup=lp.setup_fixed)
     t1 = time.clock() - t
-    lp.run_variable(*setup)
+    print sum(lp.run_times_matlab(*setup))
     t2 = time.clock() - t1
     print str(n) + ': ' + str(t1) + ', ' + str(t2)
     times.append([t1, t2])
