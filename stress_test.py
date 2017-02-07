@@ -7,7 +7,7 @@ import linear_program as lp
 
 times = []
 start = 2
-stop = 8
+stop = 14
 index = range(start, stop)
 
 import matlab.engine
