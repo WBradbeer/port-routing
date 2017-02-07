@@ -146,12 +146,34 @@ def run_matlab(F, c, A_eqs, b_eq, A_ub, b_ub):
     c = matlab.double(initializer=c)
     A_ub = [list(row) for row in A_ub]
     A_ub = matlab.double(initializer=A_ub)
-    
+
     i = 0
     for A_eq in A_eqs:
         A_eq = [list(row) for row in A_eq]
         A_eq = matlab.double(initializer=A_eq)
         results[i] = eng.linprog(c, A_ub, b_ub, A_eq, b_eq, lb)
+        i += 1
+    return results
+
+
+def run_times_matlab(F, c, A_eqs, b_eq, A_ub, b_ub):
+    import matlab.engine
+    eng = matlab.engine.start_matlab()
+    lb = matlab.double([0] * len(c))
+    results = [None] * 2 ** F
+    b_eq = matlab.double(initializer=b_eq)
+    b_ub = matlab.double(initializer=b_ub)
+    c = matlab.double(initializer=c)
+    A_ub = [list(row) for row in A_ub]
+    A_ub = matlab.double(initializer=A_ub)
+
+    i = 0
+    for A_eq in A_eqs:
+        A_eq = [list(row) for row in A_eq]
+        A_eq = matlab.double(initializer=A_eq)
+        t = time.clock()
+        eng.linprog(c, A_ub, b_ub, A_eq, b_eq, lb)
+        results[i] = time.clock() - t
         i += 1
     return results
 
