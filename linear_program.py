@@ -101,7 +101,7 @@ def setup_times(cost_f, cost_d, containers_sent, port_capacities=None, dest_capa
     return t1, t2, t3, t4, t5, t6
 
 
-def run(F, c, A_eqs, b_eq, A_ub, b_ub):
+def run_fixed(F, c, A_eqs, b_eq, A_ub, b_ub):
     results = [None] * 2 ** F
     i = 0
     for A_eq in A_eqs:
@@ -117,6 +117,7 @@ def run_variable(F, c, A_eq, b_eq, A_ub, b_ubs):
         results[i] = opt.linprog(c, A_eq=A_eq, b_eq=b_eq, A_ub=A_ub, b_ub=b_ub)
         i += 1
     return results
+
 
 def run_octave(F, c, A_eqs, b_eq, A_ub, b_ub):
     import oct2py
@@ -136,7 +137,7 @@ def run_octave(F, c, A_eqs, b_eq, A_ub, b_ub):
     return results
 
 
-def run_matlab(F, c, A_eqs, b_eq, A_ub, b_ub):
+def run_fixed_matlab(F, c, A_eqs, b_eq, A_ub, b_ub):
     import matlab.engine
     eng = matlab.engine.start_matlab()
     lb = matlab.double([0] * len(c))
@@ -151,6 +152,28 @@ def run_matlab(F, c, A_eqs, b_eq, A_ub, b_ub):
     for A_eq in A_eqs:
         A_eq = [list(row) for row in A_eq]
         A_eq = matlab.double(initializer=A_eq)
+        results[i] = eng.linprog(c, A_ub, b_ub, A_eq, b_eq, lb)
+        i += 1
+    return results
+
+
+def run_variable_matlab(F, c, A_eq, b_eq, A_ub, b_ubs):
+    import matlab.engine
+    eng = matlab.engine.start_matlab()
+    lb = matlab.double([0] * len(c))
+    results = [None] * 2 ** F
+    b_eq = list(b_eq)
+    b_eq = matlab.double(initializer=b_eq)
+    c = matlab.double(initializer=c)
+    A_eq = [list(row) for row in A_eq]
+    A_eq = matlab.double(initializer=A_eq)
+    A_ub = [list(row) for row in A_ub]
+    A_ub = matlab.double(initializer=A_ub)
+    
+    i = 0
+    for b_ub in b_ubs:
+        b_ub = list(b_ub)
+        b_ub = matlab.double(initializer=b_ub)
         results[i] = eng.linprog(c, A_ub, b_ub, A_eq, b_eq, lb)
         i += 1
     return results
