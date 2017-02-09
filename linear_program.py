@@ -17,6 +17,8 @@ cost_d = pd.read_csv(file_path + "/data/port_cost_d.csv", index_col="Port")
 containers_sent = pd.read_csv(file_path + "/data/containers_sent_lp.csv",
                               index_col="Port")
 
+
+
 def setup_fixed(cost_f, cost_d, containers_sent, port_capacities=None, dest_capacities=None,n=None):
     F = len(cost_f)
     D = len(list(cost_d))
@@ -99,6 +101,44 @@ def setup_times(cost_f, cost_d, containers_sent, port_capacities=None, dest_capa
         A_eqs.append(A_eq)
     t6 = time.clock() - t
     return t1, t2, t3, t4, t5, t6
+
+
+def setup_gurobi(cost_f, cost_d, containers_sent, port_capacities,
+                 dest_capacities, scanner_capacity=10000, n=None):
+    import gurobipy as gb
+    cost_foreign = {(x,y): cost_f[y][x] for x in cost_f.index for y in
+                    cost_f.columns}
+    cost_dest = {(x, y): cost_d[y][x] for x in cost_d.index for y in
+                 cost_d.columns}
+    m = gb.Model('solver')
+    f_ship = m.addVars(cost_foreign.keys(), obj=cost_foreign,
+                             name="foreign_ship")
+    d_ship = m.addVars(cost_dest.keys(), obj=cost_dest,
+                          name="dest_ship")
+    scanners = m.addVars(cost_f.columns, obj=[0.0]*len(cost_f.columns),
+                          vtype=gb.GRB.INTEGER, name="scanners")
+
+    # constraint: all containers scanned
+    m.addConstrs((f_ship.sum(i, '*') == containers_sent[i] for i in cost_f.columns),
+                 "all_scanned")
+
+    # constraint: scanning ports inflow = outflow
+    m.addConstrs((f_ship.sum('*', i) == d_ship.sum(i, '*') for i in cost_f.columns),
+                 "inflow=outflow")
+
+    # constraint: scanning capacity
+    m.addConstrs((f_ship.sum('*', i) <= scanner_capacity * scanners[i] for i in
+                  cost_f.columns), "scanning_capacity")
+
+    # constraint: foreign port capacity not exceeded
+    m.addConstrs((f_ship.sum('*', i) <= port_capacities[i] for i in
+                  cost_f.columns), "foreign_capacity")
+
+    # constraint: destination port capacity
+    m.addConstrs((d_ship.sum('*', i) <= dest_capacities[i] for i in
+                  cost_d.columns), "dest_capacity")
+    m.addConstr(scanners.sum('*') == 1, "scanner_number")
+    return m
 
 
 def run_fixed(F, c, A_eqs, b_eq, A_ub, b_ub):
