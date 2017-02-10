@@ -73,6 +73,42 @@ def setup_variable(cost_f, cost_d, containers_sent, port_capacities, dest_capaci
 
     return F, c, A_eq, b_eq, A_ub, b_ubs
 
+def setup_variable_integer(cost_f, cost_d, containers_sent, port_capacities, dest_capacities, scanner_capacity=10000, n=None):
+    F = len(cost_f)
+    D = len(list(cost_d))
+
+    c = lp.flatten_2(np.array(cost_f)) + lp.flatten_2(np.array(cost_d)) + (F) * [0]
+
+    # constraint: all containers scanned
+    A_eq = np.hstack([lp.row_sums(F, F), np.zeros((F, F * D)), np.zeros((F, F))])
+    b_eq = containers_sent[0]
+
+    # constraint: scanning ports inflow = outflow
+    A_eq = np.vstack((A_eq, np.hstack([lp.col_sums(F,F), np.array(lp.row_sums(F,D)) * -1, np.zeros(F, F)])))
+    b_eq = np.concatenate([b_eq, [0] * F])
+
+    # # NEW constraint: sum of scanners = iteration
+    # A_eq = np.vstack((A_eq, np.hstack([ [0] * (F * F), [0] * (F * D), [1] * (F)])))
+    # b_eq = np.concatenate([b_eq, NOT_A_CLUE)
+
+    # constraint: non negativity
+    A_ub = np.identity(F * F + F * D + F) * -1
+    b_ub = (F * F + F * D + F) * [0]
+
+    # constraint: scanning port capacity
+    A_ub = np.vstack([A_ub, np.hstack([lp.col_sums(F, F), np.zeros((F, F * D)), np.zeros((F, F))])])
+    b_ub.extend(port_capacities)
+
+    # constraint: destination port capacity
+    A_ub = np.vstack([A_ub, np.hstack([np.zeros((D, F * F)), lp.col_sums(F, D), np.zeros((D, F))])])
+    b_ub.extend(dest_capacities)
+
+    # constraint: scanner_capacity not exceeded
+    A_ub = np.vstack([A_ub, np.hstack([lp.col_sums(F,F), np.zeros((F,F*D)), np.identity(F) * (-scanner_capacity)])])
+    b_ubs = np.concatenate([b_uq, [0] * F])
+
+    return F, c, A_eq, b_eq, A_ub, b_ubs
+
 def setup_times(cost_f, cost_d, containers_sent, port_capacities=None, dest_capacities=None, n=None):
     F = len(cost_f)
     D = len(list(cost_d))
