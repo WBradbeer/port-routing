@@ -1,5 +1,7 @@
+from __future__ import division
 import copy
 import itertools
+import math
 import os
 import time
 
@@ -173,8 +175,30 @@ def setup_gurobi(cost_f, cost_d, containers_sent, port_capacities,
     # constraint: destination port capacity
     m.addConstrs((d_ship.sum('*', i) <= dest_capacities[i] for i in
                   cost_d.columns), "dest_capacity")
-    m.addConstr(scanners.sum('*') == 1, "scanner_number")
-    return m
+
+    # constraint: # of scanners
+    min_scan = int(math.ceil(sum(containers_sent.values) / scanner_capacity))
+    max_scan = int(sum((math.ceil(x/scanner_capacity) for x in
+                    containers_sent.values)))
+    combs = range(min_scan, max_scan + 1)
+    m.addConstr(scanners.sum('*') == 0, "scanner_number")
+
+    return m, combs, len(cost_f.columns)
+
+
+def run_gurobi(m, combs, F):
+    results = {}
+    m.update()
+    for i in combs:
+        c = m.getConstrByName("scanner_number")
+        c.setAttr("rhs", i)
+        m.optimize()
+        res = {
+            'scanner': {x.varName: x.X for x in m.getVars()[-F:]},
+            'obj': m.objVal,
+        }
+        results[str(i)] = res
+    return results
 
 
 def run_fixed(F, c, A_eqs, b_eq, A_ub, b_ub):
