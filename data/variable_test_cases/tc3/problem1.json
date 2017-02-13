@@ -1,0 +1,13 @@
+{
+   'scanner_capacity': 60,
+   'solution' : {
+     '3': {
+         'obj': 500.0,
+         'scanner': {
+         'scanners[F1]': 1.0,
+         'scanners[F2]': 1.0,
+         'scanners[F3]': 1.0
+         }
+     }
+    }
+}
