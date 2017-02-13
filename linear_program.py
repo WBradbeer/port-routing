@@ -188,6 +188,7 @@ def setup_gurobi(cost_f, cost_d, containers_sent, port_capacities,
 
 def run_gurobi(m, combs, F):
     results = {}
+    m.params.OutputFlag = 0
     m.update()
     for i in combs:
         c = m.getConstrByName("scanner_number")

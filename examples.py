@@ -33,7 +33,7 @@ def run_exhaustive_n(n, scanner_cost=100):
     return oh.exhaustive_optimization(distances, containers, sps,
                                scanner_cost)
 
-def run_setup_n(n, sample=None, setup=linear_program.setup_fixed):
+def run_setup_n(n, sample=None, setup=linear_program.setup_variable):
     source = n
     dest = int(math.ceil(n / 4.0))
     containers = generate_containers(source, dest)
@@ -42,3 +42,21 @@ def run_setup_n(n, sample=None, setup=linear_program.setup_fixed):
     dp = range(source, source + dest)
     return setup(distances[sps][:-dest], distances[dp][:-dest], containers, port_capacities=[1000]*source,
                  dest_capacities=[1000]*dest, n=sample)
+
+
+def run_gurobi_setup_n(n, sample=None):
+    source = n
+    dest = int(math.ceil(n / 4.0))
+    containers = generate_containers(source, dest, sent=400)
+    distances = generate_distances(source, dest)
+    sps = range(0, source)
+    dp = range(source, source + dest)
+    cost_f = pd.DataFrame(distances[sps][:-dest].values)
+    cost_d = pd.DataFrame(distances[dp][:-dest].values)
+    return linear_program.setup_gurobi(cost_f,
+                                       cost_d,
+                                       containers[0],
+                                       port_capacities=[10000]*source,
+                                       dest_capacities=[10000]*dest,
+                                       scanner_capacity=1000,
+                                       n=sample)
