@@ -40,7 +40,7 @@ def run_setup_n(n, sample=None, setup=linear_program.setup_variable):
     distances = generate_distances(source, dest)
     sps = range(0, source)
     dp = range(source, source + dest)
-    return setup(distances[sps][:-dest], distances[dp][:-dest], containers, port_capacities=[1000]*source,
+    return setup(distances[sps][:-dest], distances[dp][:-dest], containers[0], port_capacities=[1000]*source,
                  dest_capacities=[1000]*dest, n=sample)
 
 

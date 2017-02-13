@@ -83,13 +83,17 @@ def setup_variable_integer(cost_f, cost_d, containers_sent, port_capacities, des
 
     # constraint: all containers scanned
     A_eq = np.hstack([lp.row_sums(F, F), np.zeros((F, F * D)), np.zeros((F, F))])
-    b_eq = containers_sent[0]
+    b_eq = containers_sent
 
     # constraint: scanning ports inflow = outflow
     A_eq = np.vstack((A_eq, np.hstack([lp.col_sums(F,F), np.array(lp.row_sums(F,D)) * -1, np.zeros((F, F))])))
     b_eq = np.concatenate([b_eq, [0] * F])
 
     # constraint: sum of scanners = iteration
+    min_scan = int(math.ceil(sum(containers_sent.values) / scanner_capacity))
+    max_scan = int(sum((math.ceil(x / scanner_capacity) for x in
+                        containers_sent.values)))
+    combs = range(min_scan, max_scan + 1)
     A_eq = np.vstack((A_eq, np.hstack([ [0] * (F * F), [0] * (F * D), [1] * (F)])))
     b_eq = np.concatenate([b_eq, [0] * (1)])
 
@@ -109,7 +113,7 @@ def setup_variable_integer(cost_f, cost_d, containers_sent, port_capacities, des
     A_ub = np.vstack([A_ub, np.hstack([lp.col_sums(F,F), np.zeros((F,F*D)), np.identity(F) * (-scanner_capacity)])])
     b_ubs = np.concatenate([b_ub, [0] * F])
 
-    return F, c, A_eq, b_eq, A_ub, b_ubs
+    return F, c, A_eq, b_eq, A_ub, b_ubs, combs
 
 def setup_times(cost_f, cost_d, containers_sent, port_capacities=None, dest_capacities=None, n=None):
     F = len(cost_f)
@@ -286,8 +290,8 @@ def run_variable_integer(F, c, A_eq, b_eq, A_ub, b_ub, scanner_range):
     lb = matlab.double([0] * len(c))
     results = [None] * 2 ** F
     b_eq = list(b_eq)
-    b_eq = matlab.double(initializer=b_eq)
     b_ub = list(b_ub)
+    b_ub = matlab.double(initializer=b_ub)
     c = matlab.double(initializer=c)
     A_eq = [list(row) for row in A_eq]
     A_eq = matlab.double(initializer=A_eq)
@@ -296,13 +300,12 @@ def run_variable_integer(F, c, A_eq, b_eq, A_ub, b_ub, scanner_range):
 
     int_dec_vars = range(A_eq.size[1] - F + 1, A_eq.size[1] + 1 )
     int_dec_vars = matlab.double(initializer=int_dec_vars)
+    results = {}
 
-    i = 0
     for n in scanner_range:
-        b_ub[-1] = n
-        b_ubs = matlab.double(initializer=b_ub)
-        results[i] = eng.intlinprog(c, int_dec_vars, A_ub, b_ubs, A_eq, b_eq, lb)
-        i += 1
+        b_eq[-1] = n
+        b_eqs = matlab.double(initializer=b_eq)
+        results[str(n)] = eng.intlinprog(c, int_dec_vars, A_ub, b_ub, A_eq, b_eqs, lb)
     return results
 
 
