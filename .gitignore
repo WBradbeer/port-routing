@@ -1,3 +1,6 @@
 *.pyc
 .ipynb_checkpoints/*
 output/*
+*.DS_Store
+stress_test.py
+gurobi.log
