@@ -4,8 +4,8 @@
      "1": {
          "obj": 1300,
          "scanner": {
-         "scanners[F1]": 0.0,
-         "scanners[F2]": 1.0,
+         "scanners[F1]": 1.0,
+         "scanners[F2]": 0.0,
          "scanners[F3]": 0.0
          }
      },
