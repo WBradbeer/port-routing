@@ -3,19 +3,9 @@
    'solution' : {
      '1': {
          'obj': -1,
-         'scanner': {
-         'scanners[F1]': 0.0,
-         'scanners[F2]': 0.0,
-         'scanners[F3]': 0.0
-         }
      }
      '2': {
        'obj': -1,
-       'scanner': {
-         'scanners[F1]': 1.0,
-         'scanners[F2]': 1.0,
-         'scanners[F3]': 1.0
-       }
      }
      '3': {
          'obj': 500.0,
