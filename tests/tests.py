@@ -3,7 +3,6 @@ import unittest
 
 import pandas as pd
 
-import linear_program
 import lp_helpers as lp
 import opt_helpers as oh
 
@@ -119,46 +118,3 @@ class LPTestCase(unittest.TestCase):
     def test_col_sums(self):
         sums = [list(x) for x in lp.col_sums(2,3)]
         self.assertEqual(sums, [[1,0,0,1,0,0],[0,1,0,0,1,0],[0,0,1,0,0,1]])
-
-
-class VariableTestCase(unittest.TestCase):
-    def setUp(self):
-        def setUpTC(case=1):
-            case_path = "/../data/variable_test_cases/tc{}/".format(case)
-
-            port_info = pd.read_csv(FILE_PATH + case_path + "foreign_port_info.csv",
-                                      index_col="Port")
-            self.c_sent = port_info["Containers"].values
-            self.p_capacity = port_info["Capacity"].values
-            self.c_received = pd.read_csv(FILE_PATH + case_path + "containers_received.csv",
-                                      index_col="Port")["Containers"].values
-            self.s_ports = list(pd.read_csv(FILE_PATH + case_path + "scanning_ports.csv",
-                                            index_col="Port").index)
-
-            distances = pd.read_csv(FILE_PATH + case_path + "port_costs.csv",
-                                         index_col="Port")
-            source = len(self.s_ports)
-            dest = len(self.c_received)
-            sps = range(0, source)
-            dp = range(source, source + dest)
-            self.cost_t = distances[sps][:-dest]
-            self.cost_d = distances[dp][:-dest]
-
-            solution = pd.read_csv(FILE_PATH + case_path + "solution.csv")
-            self.s_cost = solution["Scanner_Cost"][0]
-            self.s_capacity = solution['Scanner_Capacity'][0]
-            self.binary_soln = solution["Binary_Optimal_Soln"][0]
-            self.soln_cost = solution["Soln_Cost"][0]
-
-        self.testcase = setUpTC
-
-        def run_test():
-            setup = linear_program.setup_variable(self.cost_t, self.cost_d, self.c_sent, self.p_capacity, self.c_received,
-                                          self.s_capacity)
-            self.results = linear_program.run_variable(*setup)
-
-        self.run_test = run_test
-
-    def test_case_1(self):
-        self.testcase(1)
-        self.run_test()

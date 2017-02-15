@@ -201,7 +201,7 @@ def run_gurobi(m, combs, F):
         if m.SolCount:
             res = {
                 'scanner': {x.varName: x.X for x in m.getVars()[-F:]},
-                'obj': m.objVal,
+                'obj': round(m.objVal),
             }
         else: res = {'obj': -1}
         results[str(i)] = res
