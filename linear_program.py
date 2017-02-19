@@ -292,7 +292,6 @@ def run_variable_integer(F, c, A_eq, b_eq, A_ub, b_ub, scanner_range, port_names
     import matlab.engine
     eng = matlab.engine.start_matlab()
     lb = matlab.double([0] * len(c))
-    results = [None] * 2 ** F
     b_eq = list(b_eq)
     b_ub = list(b_ub)
     b_ub = matlab.double(initializer=b_ub)
@@ -304,20 +303,19 @@ def run_variable_integer(F, c, A_eq, b_eq, A_ub, b_ub, scanner_range, port_names
 
     int_dec_vars = range(A_eq.size[1] - F + 1, A_eq.size[1] + 1 )
     int_dec_vars = matlab.double(initializer=int_dec_vars)
-    new_results = {}
+    results = {}
 
     for n in scanner_range:
         b_eq[-1] = n
         b_eqs = matlab.double(initializer=b_eq)
-        results = eng.intlinprog(c, int_dec_vars, A_ub, b_ub, A_eq, b_eqs, lb)
-        print results
-        res = {
-            'scanner':{x: round(float(y[0])) for x, y in zip(port_names, results[-F:])},
-            'obj': float(results[-(F+1)][0])
-        }
-        print res
-        new_results[str(n)] = res
-        # print res
+        dec_vars = eng.intlinprog(c, int_dec_vars, A_ub, b_ub, A_eq, b_eqs, lb)
+        if dec_vars:
+            res = {
+                'scanner':{x: round(float(y[0])) for x, y in zip(port_names, dec_vars[-F:])},
+                'obj': round(float(np.array(c).dot(np.array(dec_vars))[0][0]))
+            }
+        else: res = {'obj': -1}
+        results[str(n)] = res
     return results
 
 
