@@ -312,7 +312,7 @@ def run_variable_integer(F, c, A_eq, b_eq, A_ub, b_ub, scanner_range, port_names
         dec_vars = eng.intlinprog(c, int_dec_vars, A_ub, b_ub, A_eq, b_eqs, lb)
         if dec_vars:
             res = {
-                'scanner':{x: round(float(y[0])) for x, y in zip(port_names, dec_vars[-F:])},
+                'scanner':{"scanner[{}]".format(x): round(float(y[0])) for x, y in zip(port_names, dec_vars[-F:])},
                 'obj': round(float(np.array(c).dot(np.array(dec_vars))[0][0]))
             }
         else: res = {'obj': -1}
