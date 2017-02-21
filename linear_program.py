@@ -75,7 +75,8 @@ def setup_variable(cost_f, cost_d, containers_sent, port_capacities, dest_capaci
 
     return F, c, A_eq, b_eq, A_ub, b_ubs
 
-def setup_variable_integer(cost_f, cost_d, containers_sent, port_capacities, dest_capacities, scanner_capacity=10000, n=None):
+def setup_variable_integer(cost_f, cost_d, containers_sent, port_capacities, dest_capacities,
+                           scanner_capacity=10000, n=None):
     F = len(cost_f)
     D = len(list(cost_d))
 
