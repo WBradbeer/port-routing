@@ -1,5 +1,6 @@
 import copy
 import json
+import time
 
 import numpy as np
 import pandas as pd
@@ -81,3 +82,13 @@ def one_non_scanner(data, solver='gurobi'):
         data['port_capacities'] = copy.deepcopy(o_data)
         data['port_capacities'][port] = 0
         yield solve(data, solver)
+
+
+def output_test_results(test, data, solver='gurobi'):
+    file_name = time.strftime("%a%d%b%Y%H%M%S", time.localtime()) + '.txt'
+    for result in test(data, solver):
+        res_file = open(file_name, mode='a')
+        res_file.write(json.dumps(result))
+        res_file.write('\n')
+        res_file.flush()
+        res_file.close()
