@@ -1,4 +1,4 @@
-from copy import copy
+import copy
 import json
 
 import numpy as np
@@ -50,13 +50,34 @@ def get_data_from_path(path, prob_num=1):
 
 
 def solve_varying_data(data, varying, values, solver='gurobi'):
-    o_data = copy(data[varying])
+    o_data = copy.copy(data[varying])
     for val in values:
         data[varying] = o_data * val
         yield solve(data, solver)
 
+
 def solve_noisy_data(data, varying, stdev, replications, solver='gurobi'):
-    o_data = copy(data[varying])
+    o_data = copy.copy(data[varying])
     for i in range(0, replications):
         data[varying] = o_data.add(np.random.randn(*o_data.shape) * stdev)
+        yield solve(data, solver)
+
+
+def leave_one_out(data, solver='gurobi'):
+    for port in data['cost_f'].index:
+        data_minus = {}
+        data_minus['cost_f'] = data['cost_f'].drop(port, 0).drop(port, 1)
+        data_minus['cost_d'] = data['cost_d'].drop(port, 0)
+        data_minus['containers_sent'] = data['containers_sent'].drop(port, 0)
+        data_minus['port_capacities'] = data['port_capacities'].drop(port, 0)
+        data_minus['dest_capacities'] = data['dest_capacities']
+        data_minus['scanner_capacity'] = data['scanner_capacity']
+        yield solve(data_minus, solver)
+
+
+def one_non_scanner(data, solver='gurobi'):
+    o_data = copy.deepcopy(data['port_capacities'])
+    for port in data['cost_f'].index:
+        data['port_capacities'] = copy.deepcopy(o_data)
+        data['port_capacities'][port] = 0
         yield solve(data, solver)
