@@ -148,7 +148,7 @@ def setup_times(cost_f, cost_d, containers_sent, port_capacities=None, dest_capa
 
 
 def setup_gurobi(cost_f, cost_d, containers_sent, port_capacities,
-                 dest_capacities, scanner_capacity=10000, n=None):
+                 dest_capacities, scanner_capacity):
     import gurobipy as gb
     cost_foreign = {(x,y): cost_f[y][x] for x in cost_f.index for y in
                     cost_f.columns}
