@@ -2,7 +2,7 @@
    "scanner_capacity": 60,
    "solution" : {
      "1": {
-         "obj": 1300,
+         "obj": 1200,
          "scanner": {
          "scanners[F1]": 1.0,
          "scanners[F2]": 0.0,
@@ -13,12 +13,12 @@
        "obj": 800,
        "scanner": {
          "scanners[F1]": 1.0,
-         "scanners[F2]": 1.0,
-         "scanners[F3]": 0.0
+         "scanners[F2]": 0.0,
+         "scanners[F3]": 1.0
        }
      },
      "3": {
-         "obj": 600.0,
+         "obj": 640.0,
          "scanner": {
          "scanners[F1]": 1.0,
          "scanners[F2]": 1.0,
