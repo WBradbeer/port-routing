@@ -87,6 +87,31 @@ class VariableTestCase(unittest.TestCase):
         self.assertDictEqual(self.results,self.solution)
 
     def test_case_7_gurobi(self):
-        self.testcase(6)
+        self.testcase(7)
+        self.run_test(linear_program.setup_gurobi, linear_program.run_gurobi)
+        self.assertDictEqual(self.results,self.solution)
+
+    def test_case_8_gurobi(self):
+        self.testcase(8)
+        self.run_test(linear_program.setup_gurobi, linear_program.run_gurobi)
+        self.assertDictEqual(self.results,self.solution)
+
+    def test_case_9_gurobi(self):
+        self.testcase(9)
+        self.run_test(linear_program.setup_gurobi, linear_program.run_gurobi)
+        self.assertDictEqual(self.results,self.solution)
+
+    def test_case_10_gurobi(self):
+        self.testcase(10)
+        self.run_test(linear_program.setup_gurobi, linear_program.run_gurobi)
+        self.assertDictEqual(self.results,self.solution)
+
+    def test_case_11_gurobi(self):
+        self.testcase(11)
+        self.run_test(linear_program.setup_gurobi, linear_program.run_gurobi)
+        self.assertDictEqual(self.results,self.solution)
+
+    def test_case_12_gurobi(self):
+        self.testcase(12)
         self.run_test(linear_program.setup_gurobi, linear_program.run_gurobi)
         self.assertDictEqual(self.results,self.solution)
