@@ -18,12 +18,7 @@
        }
      },
      "3": {
-         "obj": 980.0,
-         "scanner": {
-         "scanners[F1]": 1.0,
-         "scanners[F2]": 1.0,
-         "scanners[F3]": 1.0
-         }
+         "obj": -1
      }
     }
 }
