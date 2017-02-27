@@ -101,11 +101,6 @@ class VariableTestCase(unittest.TestCase):
         self.run_test(linear_program.setup_gurobi, linear_program.run_gurobi)
         self.assertDictEqual(self.results,self.solution)
 
-    def test_case_10_gurobi(self):
-        self.testcase(10)
-        self.run_test(linear_program.setup_gurobi, linear_program.run_gurobi)
-        self.assertDictEqual(self.results,self.solution)
-
     def test_case_11_gurobi(self):
         self.testcase(11)
         self.run_test(linear_program.setup_gurobi, linear_program.run_gurobi)
@@ -113,5 +108,4 @@ class VariableTestCase(unittest.TestCase):
 
     def test_case_12_gurobi(self):
         self.testcase(12)
-        self.run_test(linear_program.setup_gurobi, linear_program.run_gurobi)
-        self.assertDictEqual(self.results,self.solution)
+        self.assertRaises(OverflowError, self.run_test, *[linear_program.setup_gurobi, linear_program.run_gurobi])
