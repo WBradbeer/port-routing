@@ -16,7 +16,7 @@ SOLVERS = {
 def solve(data, solver='gurobi'):
     setup = SOLVERS[solver][0]
     run = SOLVERS[solver][1]
-    return run(*setup(**data))
+    return [run(*setup(**data))]
 
 
 def get_data_from_path(path, prob_num=1):
@@ -34,8 +34,8 @@ def get_data_from_path(path, prob_num=1):
     dest = len(c_received)
     sps = range(0, source)
     dp = range(source, source + dest)
-    cost_f = distances[sps][:-dest]
-    cost_d = distances[dp][:-dest]
+    cost_f = distances[sps][:source]
+    cost_d = distances[dp][:source]
 
     problem = json.load(open(path+ "problem{}.json".format(prob_num)))
 
