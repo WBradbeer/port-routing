@@ -42,7 +42,7 @@ class VariableTestCase(unittest.TestCase):
         def run_test(setup, run):
             setup = setup(self.cost_t, self.cost_d, self.c_sent, self.p_capacity, self.c_received,
                           self.s_capacity)
-            self.results = run(*setup)
+            self.results = run(*setup, verbose=False)
 
         self.run_test = run_test
 
