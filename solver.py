@@ -10,6 +10,7 @@ import linear_program as lp
 
 SOLVERS = {
     'gurobi': (lp.setup_gurobi, lp.run_gurobi),
+    'matlab': (lp.setup_variable_integer, lp.run_variable_integer),
 }
 
 
