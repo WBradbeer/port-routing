@@ -193,18 +193,22 @@ def setup_gurobi(cost_f, cost_d, containers_sent, port_capacities,
     return m, combs, len(cost_f.columns)
 
 
-def run_gurobi(m, combs, F):
+def run_gurobi(m, combs, F, verbose=True):
     results = {}
     m.params.OutputFlag = 0
     m.update()
     last_obj = 0
+    if verbose:
+        var_index = 0
+    else:
+        var_index = -F
     for i in combs:
         c = m.getConstrByName("scanner_number")
         c.setAttr("rhs", i)
         m.optimize()
         if m.SolCount and m.objVal != last_obj:
             res = {
-                'scanner': {x.varName: x.X for x in m.getVars()[-F:]},
+                'scanner': {x.varName: x.X for x in m.getVars()[var_index:]},
                 'obj': round(m.objVal),
             }
             last_obj = m.objVal
