@@ -10,6 +10,7 @@ import linear_program as lp
 
 SOLVERS = {
     'gurobi': (lp.setup_gurobi, lp.run_gurobi),
+    'gurobi_set': (lp.setup_gurobi, lp.run_gurobi_set_scanners),
     'matlab': (lp.setup_variable_integer, lp.run_variable_integer),
 }
 
@@ -18,6 +19,13 @@ def solve(data, solver='gurobi'):
     setup = SOLVERS[solver][0]
     run = SOLVERS[solver][1]
     return [run(*setup(**data))]
+
+
+def solve_set_scanners(data, scanner_set, solver='gurobi_set'):
+    setup = list(SOLVERS[solver][0](**data))
+    setup.append(scanner_set)
+    run = SOLVERS[solver][1]
+    return [run(*setup)]
 
 
 def get_data_from_path(path, prob_num=1):

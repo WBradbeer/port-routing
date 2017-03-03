@@ -217,6 +217,30 @@ def run_gurobi(m, combs, F, verbose=True):
     return results
 
 
+def run_gurobi_set_scanners(m, combs, F, scanner_sets, verbose=True):
+    results = {}
+    m.params.OutputFlag = 0
+    m.update()
+    if verbose:
+        var_index = 0
+    else:
+        var_index = -F
+    for set in scanner_sets:
+        c = m.getConstrByName("scanner_number")
+        c.setAttr("rhs", sum(set.values))
+        scanners = {i: m.getVarByName("scanners[{}]".format(i)) for i in set.index}
+        m.addConstrs((scanners[i] == set[i] for i in set.index))
+        m.optimize()
+        if m.SolCount:
+            res = {
+                'scanner': {x.varName: x.X for x in m.getVars()[var_index:]},
+                'obj': round(m.objVal),
+            }
+        else: res = {'obj': -1}
+        results[str(sum(set.values))] = res
+    assert len(scanner_sets) == len(results)
+    return results
+
 def run_fixed(F, c, A_eqs, b_eq, A_ub, b_ub):
     results = [None] * 2 ** F
     i = 0
