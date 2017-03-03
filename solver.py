@@ -84,9 +84,9 @@ def one_non_scanner(data, solver='gurobi'):
         yield solve(data, solver)
 
 
-def output_test_results(test, data, solver='gurobi'):
+def output_test_results(test, args, solver='gurobi'):
     file_name = time.strftime("%a%d%b%Y%H%M%S", time.localtime()) + '.txt'
-    for result in test(data, solver):
+    for result in test(*args, solver=solver):
         res_file = open(file_name, mode='a')
         res_file.write(json.dumps(result))
         res_file.write('\n')
