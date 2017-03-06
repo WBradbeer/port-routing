@@ -85,9 +85,11 @@ def leave_one_out(data, solver='gurobi'):
         yield solve(data_minus, solver)
 
 
-def one_non_scanner(data, solver='gurobi'):
+def one_non_scanner(data, ports=None, solver='gurobi'):
     o_data = copy.deepcopy(data['port_capacities'])
-    for port in data['cost_f'].index:
+    if not ports:
+        ports = data['cost_f'].index
+    for port in ports:
         data['port_capacities'] = copy.deepcopy(o_data)
         data['port_capacities'][port] = 0
         yield solve(data, solver)
