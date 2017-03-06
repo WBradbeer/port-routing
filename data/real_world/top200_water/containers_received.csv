@@ -1,1 +1,11 @@
-Port,ContainersHawaii,27367.50Alaska,1892.40North Pacific,1631282.14Central Pacific,1009473.32South Pacific,9541085.99East Gulf of Mexico,1106398.32West Gulf of Mexico,342672.41Central Florida,958647.12South Atlantic,3511546.12North Atlantic,2495168.52
+Port,Containers
+Hawaii,"54,735.00"
+Alaska,"3,784.80"
+North Pacific,"3,262,564.28"
+Central Pacific,"2,018,946.64"
+South Pacific,"19,082,171.97"
+East Gulf of Mexico,"2,212,796.64"
+West Gulf of Mexico,"685,344.83"
+Central Florida,"1,917,294.23"
+South Atlantic,"7,023,092.24"
+North Atlantic,"4,990,337.04"
