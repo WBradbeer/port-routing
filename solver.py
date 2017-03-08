@@ -30,15 +30,18 @@ def solve_set_scanners(data, scanner_set, solver='gurobi_set'):
 
 def get_data_from_path(path, prob_num=1):
     port_info = pd.read_csv(path + "foreign_port_info.csv",
-                            index_col="Port")
+                            dtype={'Port': str})
+    port_info.set_index('Port', inplace=True)
     c_sent = port_info["Containers"]
     p_capacity = port_info["Capacity"]
+
     c_received = pd.read_csv(path + "containers_received.csv",
-                                  index_col="Port")["Containers"]
+                             dtype={'Port': str}
+                             ).set_index('Port')["Containers"]
     s_ports = list(port_info.index)
 
     distances = pd.read_csv(path + "port_costs.csv",
-                            index_col="Port")
+                            dtype={'Port': str}).set_index('Port')
     source = len(s_ports)
     dest = len(c_received)
     sps = range(0, source)
