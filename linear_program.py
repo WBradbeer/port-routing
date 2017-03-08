@@ -157,11 +157,11 @@ def setup_gurobi(cost_f, cost_d, containers_sent, port_capacities,
                  cost_d.columns}
     m = gb.Model('solver')
     f_ship = m.addVars(cost_foreign.keys(), obj=cost_foreign,
-                             name="foreign_ship")
+                             name="f")
     d_ship = m.addVars(cost_dest.keys(), obj=cost_dest,
-                          name="dest_ship")
+                          name="d")
     scanners = m.addVars(cost_f.columns, obj=[0.0]*len(cost_f.columns),
-                          vtype=gb.GRB.INTEGER, name="scanners")
+                          vtype=gb.GRB.INTEGER, name="s")
 
     # constraint: all containers scanned
     m.addConstrs((f_ship.sum(i, '*') == containers_sent[i] for i in cost_f.columns),
@@ -208,7 +208,7 @@ def run_gurobi(m, combs, F, verbose=True):
         m.optimize()
         if m.SolCount and m.objVal != last_obj:
             res = {
-                'scanner': {x.varName: x.X for x in m.getVars()[var_index:]},
+                'vars': {x.varName: x.X for x in m.getVars()[var_index:]},
                 'obj': round(m.objVal),
             }
             last_obj = m.objVal
