@@ -206,11 +206,14 @@ def run_gurobi(m, combs, F, verbose=True):
         c = m.getConstrByName("scanner_number")
         c.setAttr("rhs", i)
         m.optimize()
-        if m.SolCount and m.objVal != last_obj:
+        if m.SolCount:
             res = {
                 'vars': {x.varName: x.X for x in m.getVars()[var_index:]},
                 'obj': round(m.objVal),
             }
+            if m.objVal != last_obj:
+                res['flag'] = 0
+            else: res['flag'] = 1
             last_obj = m.objVal
         else: res = {'obj': -1}
         results[str(i)] = res
