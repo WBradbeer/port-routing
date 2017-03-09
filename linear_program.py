@@ -193,7 +193,7 @@ def setup_gurobi(cost_f, cost_d, containers_sent, port_capacities,
     return m, combs, len(cost_f.columns)
 
 
-def run_gurobi(m, combs, F, verbose=True):
+def run_gurobi(m, combs, F, time_limit=60*60, verbose=True):
     results = {}
     m.params.OutputFlag = 0
     m.update()
@@ -205,7 +205,16 @@ def run_gurobi(m, combs, F, verbose=True):
     for i in combs:
         c = m.getConstrByName("scanner_number")
         c.setAttr("rhs", i)
+        m.setParam('TimeLimit', time_limit)
+        if last_obj:
+            for y in m.getVars():
+                if y.VarName == 's[1]':
+                    y.start = y.X + 1
+                else:
+                    y.start = y.X
+            m.update()
         m.optimize()
+        print "{}: {}".format(i, m.Runtime) 
         if m.SolCount:
             res = {
                 'vars': {x.varName: x.X for x in m.getVars()[var_index:]},
@@ -215,6 +224,7 @@ def run_gurobi(m, combs, F, verbose=True):
                 res['flag'] = 0
             else: res['flag'] = 1
             last_obj = m.objVal
+
         else: res = {'obj': -1}
         results[str(i)] = res
     return results
@@ -234,6 +244,7 @@ def run_gurobi_set_scanners(m, combs, F, scanner_sets, verbose=True):
         scanners = {i: m.getVarByName("scanners[{}]".format(i)) for i in set.index}
         m.addConstrs((scanners[i] == set[i] for i in set.index))
         m.optimize()
+        print m.Runtime
         if m.SolCount:
             res = {
                 'scanner': {x.varName: x.X for x in m.getVars()[var_index:]},
