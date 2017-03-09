@@ -3,26 +3,29 @@
    "solution" : {
      "1": {
          "obj": 950,
-         "scanner": {
-         "scanners[F1]": 1.0,
-         "scanners[F2]": 0.0,
-         "scanners[F3]": 0.0
+       "flag": 0,
+         "vars": {
+         "s[F1]": 1.0,
+         "s[F2]": 0.0,
+         "s[F3]": 0.0
          }
      },
      "2": {
        "obj": 600,
-       "scanner": {
-         "scanners[F1]": 1.0,
-         "scanners[F2]": 1.0,
-         "scanners[F3]": 0.0
+       "flag": 0,
+       "vars": {
+         "s[F1]": 1.0,
+         "s[F2]": 1.0,
+         "s[F3]": 0.0
        }
      },
      "3": {
          "obj": 550.0,
-         "scanner": {
-         "scanners[F1]": 1.0,
-         "scanners[F2]": 1.0,
-         "scanners[F3]": 1.0
+       "flag": 0,
+         "vars": {
+         "s[F1]": 1.0,
+         "s[F2]": 1.0,
+         "s[F3]": 1.0
          }
      }
     }
