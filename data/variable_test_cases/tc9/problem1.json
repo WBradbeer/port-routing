@@ -3,18 +3,20 @@
    "solution" : {
      "1": {
          "obj": 7500,
-         "scanner": {
-         "scanners[F1]": 0.0,
-         "scanners[F2]": 0.0,
-         "scanners[F3]": 1.0
+       "flag": 0,
+         "vars": {
+         "s[F1]": 0.0,
+         "s[F2]": 0.0,
+         "s[F3]": 1.0
          }
      },
      "2": {
        "obj": 2700,
-       "scanner": {
-         "scanners[F1]": 1.0,
-         "scanners[F2]": 0.0,
-         "scanners[F3]": 1.0
+       "flag": 0,
+       "vars": {
+         "s[F1]": 1.0,
+         "s[F2]": 0.0,
+         "s[F3]": 1.0
        }
      }
     }

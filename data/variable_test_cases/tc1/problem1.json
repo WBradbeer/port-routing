@@ -2,27 +2,30 @@
    "scanner_capacity": 60,
    "solution" : {
      "1": {
-     "obj": 800.0,
-     "scanner": {
-         "scanners[F1]": 0.0,
-         "scanners[F2]": 1.0,
-         "scanners[F3]": 0.0
+     	"obj": 800.0,
+     	"flag": 0,
+     	"vars": {
+         	"s[F1]": 0.0,
+         	"s[F2]": 1.0,
+        	"s[F3]": 0.0
          }
      },
      "2": {
-     "obj": 600.0,
-     "scanner": {
-         "scanners[F1]": 1.0,
-         "scanners[F2]": 1.0,
-         "scanners[F3]": 0.0
+     	"obj": 600.0,
+     	"flag": 0,
+     	"vars": {
+	         "s[F1]": 1.0,
+	         "s[F2]": 1.0,
+	         "s[F3]": 0.0
          }
      },
      "3": {
-         "obj": 500.0,
-         "scanner": {
-         "scanners[F1]": 1.0,
-         "scanners[F2]": 1.0,
-         "scanners[F3]": 1.0
+        "obj": 500.0,
+     	"flag": 0,
+         "vars": {
+	         "s[F1]": 1.0,
+	         "s[F2]": 1.0,
+	         "s[F3]": 1.0
          }
      }
     }

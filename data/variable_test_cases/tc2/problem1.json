@@ -3,10 +3,11 @@
    "solution" : {
      "3": {
          "obj": 1300.0,
-         "scanner": {
-         "scanners[F1]": 3.0,
-         "scanners[F2]": 0.0,
-         "scanners[F3]": 0.0
+         "flag": 0,
+         "vars": {
+         "s[F1]": 3.0,
+         "s[F2]": 0.0,
+         "s[F3]": 0.0
          }
      }
     }
