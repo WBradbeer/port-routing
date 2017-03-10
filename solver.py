@@ -72,7 +72,7 @@ def solve_varying_data(data, varying, values, solver='gurobi'):
 def solve_noisy_data(data, varying, stdev, replications, solver='gurobi'):
     o_data = copy.copy(data[varying])
     for i in range(0, replications):
-        data[varying] = o_data.add(np.random.randn(*o_data.shape) * stdev)
+        data[varying] = o_data * (1 + np.random.randn(*o_data.shape) * stdev)
         yield solve(data, solver)
 
 
@@ -102,7 +102,7 @@ def output_test_results(test, args, solver='gurobi'):
     file_name = time.strftime("%a%d%b%Y%H%M%S", time.localtime()) + '.txt'
     for result in test(*args, solver=solver):
         res_file = open(file_name, mode='a')
-        res_file.write(json.dumps(result))
+        res_file.write(json.dumps(result[0]))
         res_file.write('\n')
         res_file.flush()
         res_file.close()
