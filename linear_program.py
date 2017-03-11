@@ -193,7 +193,7 @@ def setup_gurobi(cost_f, cost_d, containers_sent, port_capacities,
     return m, combs, len(cost_f.columns)
 
 
-def run_gurobi(m, combs, F, time_limit=60*60, verbose=True):
+def run_gurobi(m, combs, F, time_limit= 5*60, verbose=False):
     results = {}
     m.params.OutputFlag = 0
     m.update()
@@ -206,7 +206,7 @@ def run_gurobi(m, combs, F, time_limit=60*60, verbose=True):
         c = m.getConstrByName("scanner_number")
         c.setAttr("rhs", i)
         m.setParam('TimeLimit', time_limit)
-        if last_obj:
+        if last_obj and m.SolCount:
             for y in m.getVars():
                 if y.VarName == 's[1]':
                     y.start = y.X + 1
