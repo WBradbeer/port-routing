@@ -193,7 +193,7 @@ def setup_gurobi(cost_f, cost_d, containers_sent, port_capacities,
     return m, combs, len(cost_f.columns)
 
 
-def run_gurobi(m, combs, F, time_limit=60*60, verbose=True):
+def run_gurobi(m, combs, F, time_limit=5*60, verbose=False):
     results = {}
     m.params.OutputFlag = 0
     m.update()
@@ -214,7 +214,7 @@ def run_gurobi(m, combs, F, time_limit=60*60, verbose=True):
                     y.start = y.X
             m.update()
         m.optimize()
-        print "{}: {}".format(i, m.Runtime) 
+        print "{}: {}".format(i, m.Runtime)
         if m.SolCount:
             res = {
                 'vars': {x.varName: x.X for x in m.getVars()[var_index:]},
