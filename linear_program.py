@@ -230,7 +230,7 @@ def run_gurobi(m, combs, F, time_limit= 5*60, verbose=False):
     return results
 
 
-def run_gurobi_set_scanners(m, combs, F, scanner_sets, verbose=True):
+def run_gurobi_set_scanners(m, combs, F, scanner_sets, verbose=False):
     results = {}
     m.params.OutputFlag = 0
     m.update()
@@ -238,21 +238,24 @@ def run_gurobi_set_scanners(m, combs, F, scanner_sets, verbose=True):
         var_index = 0
     else:
         var_index = -F
-    for set in scanner_sets:
-        c = m.getConstrByName("scanner_number")
-        c.setAttr("rhs", sum(set.values))
-        scanners = {i: m.getVarByName("scanners[{}]".format(i)) for i in set.index}
-        m.addConstrs((scanners[i] == set[i] for i in set.index))
-        m.optimize()
-        print m.Runtime
-        if m.SolCount:
+    for set in scanner_sets.columns:
+        m_c = m.copy()
+        c = m_c.getConstrByName("scanner_number")
+        c.setAttr("rhs", sum(scanner_sets[set].values))
+        scanners = {i: m_c.getVarByName("s[{}]".format(i)) for i in scanner_sets.index}
+        for s in scanners.keys():
+            scanners[s].start = scanner_sets[set][s]
+        m_c.addConstrs((scanners[i] == scanner_sets[set][i] for i in scanner_sets.index))
+        m_c.optimize()
+        print m_c.Runtime
+        if m_c.SolCount:
             res = {
-                'scanner': {x.varName: x.X for x in m.getVars()[var_index:]},
-                'obj': round(m.objVal),
+                'scanner': {x.varName: x.X for x in m_c.getVars()[var_index:]},
+                'obj': round(m_c.objVal),
             }
         else: res = {'obj': -1}
-        results[str(sum(set.values))] = res
-    assert len(scanner_sets) == len(results)
+        results[str(set)] = res
+    assert len(scanner_sets.columns) == len(results)
     return results
 
 def run_fixed(F, c, A_eqs, b_eq, A_ub, b_ub):
