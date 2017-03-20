@@ -69,6 +69,16 @@ def solve_varying_data(data, varying, values, solver='gurobi'):
         yield solve(data, solver)
 
 
+def solve_varying_data_two(data, vary1, vary2, values1, values2,
+                           solver='gurobi'):
+    o_data1 = copy.copy(data[vary1])
+    o_data2 = copy.copy(data[vary2])
+    for val1 in values1:
+        data[vary1] = o_data1 * val1
+        for val2 in values2:
+            data[vary2] = o_data2 * val2
+            yield solve(data, solver)
+
 def solve_noisy_data(data, varying, stdev, replications, solver='gurobi'):
     o_data = copy.copy(data[varying])
     for i in range(0, replications):
@@ -88,7 +98,7 @@ def leave_one_out(data, solver='gurobi'):
         yield solve(data_minus, solver)
 
 
-def one_non_scanner(data, ports=None, solver='gurobi'):
+def one_non_scanner(data, ports, solver='gurobi'):
     o_data = copy.deepcopy(data['port_capacities'])
     if not ports:
         ports = data['cost_f'].index
@@ -98,11 +108,11 @@ def one_non_scanner(data, ports=None, solver='gurobi'):
         yield solve(data, solver)
 
 
-def output_test_results(test, args, solver='gurobi'):
+def output_test_results(test, args):
     file_name = time.strftime("%a%d%b%Y%H%M%S", time.localtime()) + '.txt'
-    for result in test(*args, solver=solver):
+    for result in test(*args):
         res_file = open(file_name, mode='a')
-        res_file.write(json.dumps(result[0]))
+        res_file.write(json.dumps(result))
         res_file.write('\n')
         res_file.flush()
         res_file.close()
